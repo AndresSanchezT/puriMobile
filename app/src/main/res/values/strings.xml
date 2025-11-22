@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PuriApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello Andres</string>
+    <string name="producto">Productos</string>
+    <string name="cliente">Clientes</string>
+    <string name="pedido">Pedidos</string>
+    <string name="visita">Visitas</string>
+</resources>

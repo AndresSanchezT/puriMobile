@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/productoFragment"
+        android:title="@string/producto"
+        android:icon="@drawable/features_4059951"
+        />
+    <item
+        android:id="@+id/clientesFragment"
+        android:title="@string/cliente"
+        android:icon="@drawable/customer_3126649"
+        />
+    <item
+        android:id="@+id/pedidoFragment"
+        android:title="@string/pedido"
+        android:icon="@drawable/pedido"
+        />
+    <item
+        android:id="@+id/visitasFragment"
+        android:title="@string/visita"
+        android:icon="@drawable/mercado"
+        />
+
+
+</menu>

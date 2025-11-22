@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/productoFragment">
+
+    <fragment
+        android:id="@+id/productoFragment"
+        android:name="com.andresDev.puriapp.ui.productos.ProductoFragment"
+        android:label="fragment_producto"
+        tools:layout="@layout/fragment_producto" />
+    <fragment
+        android:id="@+id/pedidoFragment"
+        android:name="com.andresDev.puriapp.ui.pedidos.PedidoFragment"
+        android:label="fragment_pedido"
+        tools:layout="@layout/fragment_pedido" />
+    <fragment
+        android:id="@+id/clientesFragment"
+        android:name="com.andresDev.puriapp.ui.clientes.ClientesFragment"
+        android:label="fragment_clientes"
+        tools:layout="@layout/fragment_clientes" />
+    <fragment
+        android:id="@+id/visitasFragment"
+        android:name="com.andresDev.puriapp.ui.visitas.VisitasFragment"
+        android:label="fragment_visitas"
+        tools:layout="@layout/fragment_visitas" />
+</navigation>
