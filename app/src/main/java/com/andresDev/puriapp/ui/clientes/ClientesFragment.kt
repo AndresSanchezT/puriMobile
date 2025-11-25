@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 
 import androidx.recyclerview.widget.LinearLayoutManager
 
@@ -15,6 +16,7 @@ import com.andresDev.puriapp.databinding.FragmentClientesBinding
 import com.andresDev.puriapp.ui.clientes.adapter.ClienteAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class ClientesFragment : Fragment() {
@@ -34,6 +36,11 @@ class ClientesFragment : Fragment() {
         initList()
         observeUI()
         initSearch()
+        binding.btnNuevoCliente.setOnClickListener {
+            findNavController().navigate(
+                ClientesFragmentDirections.actionClientesFragmentToClienteAddFragment()
+            )
+        }
     }
 
     private fun initList() {

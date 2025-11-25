@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/cardview_light_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Información del cliente (izquierda) -->
+        <LinearLayout
+            android:id="@+id/layoutClienteInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layoutBotones"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Nombre del cliente -->
+            <TextView
+                android:id="@+id/tvNombreCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre del Cliente"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Juan Pérez García" />
+
+            <!-- Dirección -->
+            <TextView
+                android:id="@+id/tvDireccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Dirección"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:drawablePadding="6dp"
+                app:drawableStartCompat="@android:drawable/ic_dialog_map"
+                app:drawableTint="@android:color/darker_gray"
+                tools:text="Av. Los Pinos 123, San Isidro, Lima" />
+
+            <!-- Deuda -->
+            <TextView
+                android:id="@+id/tvDeuda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="S/ 0.00"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_red_dark"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_deuda"
+                tools:text="Deuda: S/ 1,250.50" />
+
+        </LinearLayout>
+
+        <!-- Botones (derecha) -->
+        <LinearLayout
+            android:id="@+id/layoutBotones"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp">
+
+            <!-- Botón Check Verde -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_check"
+                app:fabCustomSize="48dp"
+                app:fabSize="mini"
+                app:tint="@android:color/white"
+                app:backgroundTint="@android:color/holo_green_dark"
+                android:contentDescription="Marcar como entregado" />
+
+            <!-- Botón Info -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_info"
+                app:fabCustomSize="48dp"
+                app:fabSize="mini"
+                app:tint="@android:color/white"
+                app:backgroundTint="@android:color/holo_blue_dark"
+                android:contentDescription="Ver detalles" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

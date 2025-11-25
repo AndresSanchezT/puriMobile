@@ -19,10 +19,19 @@
         android:id="@+id/clientesFragment"
         android:name="com.andresDev.puriapp.ui.clientes.ClientesFragment"
         android:label="fragment_clientes"
-        tools:layout="@layout/fragment_clientes" />
+        tools:layout="@layout/fragment_clientes" >
+        <action
+            android:id="@+id/action_clientesFragment_to_clienteAddFragment"
+            app:destination="@id/clienteAddFragment" />
+    </fragment>
     <fragment
         android:id="@+id/visitasFragment"
         android:name="com.andresDev.puriapp.ui.visitas.VisitasFragment"
         android:label="fragment_visitas"
         tools:layout="@layout/fragment_visitas" />
+    <fragment
+        android:id="@+id/clienteAddFragment"
+        android:name="com.andresDev.puriapp.ui.clientes.ClienteAddFragment"
+        android:label="fragment_cliente_add"
+        tools:layout="@layout/fragment_cliente_add" />
 </navigation>

@@ -14,3 +14,4 @@ data class Cliente(
     val longitud: Double?,
     val tieneCredito: Boolean
 )
+

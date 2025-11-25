@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    android:padding="16dp"
+    tools:context=".ui.clientes.ClienteAddFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- CONTENEDOR DEL LOGO + BOTÓN CÁMARA -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <!-- LOGO -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivLogoCliente"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/img_logo"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircularImage" />
+
+            <!-- BOTÓN CÁMARA -->
+            <ImageButton
+                android:id="@+id/btnCambiarImagen"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/bg_circle_white"
+                android:padding="6dp"
+                android:src="@drawable/ic_camera"
+                android:contentDescription="Cambiar imagen"
+                 />
+        </FrameLayout>
+
+        <!-- TÍTULO -->
+        <TextView
+            android:id="@+id/tvTituloCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Registrar Cliente"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_marginTop="12dp" />
+
+        <!-- FORMULARIO -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp">
+
+            <!-- Nombre del Negocio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del Negocio"
+                app:boxBackgroundMode="filled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombreNegocio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#888888" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Nombres y Apellidos -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombres y Apellidos"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundMode="filled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombresApellidos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#888888" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dirección -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dirección"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundMode="filled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDireccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#888888" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Referencia -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Referencia"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundMode="filled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etReferencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#888888" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Teléfono -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Teléfono"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundMode="filled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#888888" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- BOTONES -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/btnAnadirCliente"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Añadir"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/bg_button" />
+
+                <Button
+                    android:id="@+id/btnLimpiarCampos"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Limpiar"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/bg_button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
