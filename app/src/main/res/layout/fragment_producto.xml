@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
+    android:fillViewport="true"
     tools:context=".ui.productos.ProductoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:padding="16dp">
 
-        <!-- Imagen de arriba -->
-        <ImageView
-            android:id="@+id/ivTopImage"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
+        <!-- Imagen circular -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/img_logo"
             android:scaleType="centerCrop"
-            android:src="@drawable/img_logo" />
+            app:shapeAppearanceOverlay="@style/CircularImage"
+            app:strokeColor="@color/black"
+            app:strokeWidth="3dp"/>
 
-        <!-- Título -->
+        <!-- Título centrado -->
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
@@ -29,8 +35,8 @@
             android:text="Nuestros Productos"
             android:textColor="@android:color/white"
             android:textSize="24sp"
-            android:textStyle="bold" />
-
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
         <!-- Grid Layout con 2 columnas -->
         <GridLayout
             android:id="@+id/gridProductos"
@@ -48,19 +54,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod1"
+                    android:src="@drawable/img_lacteos"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 1"
+                    android:text="Lacteos"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -72,19 +77,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod2"
+                    android:src="@drawable/img_plasticos"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 2"
+                    android:text="Plasticos"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -96,19 +100,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod3"
+                    android:src="@drawable/img_embutidos"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 3"
+                    android:text="Embutidos"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -120,19 +123,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod4"
+                    android:src="@drawable/img_aceites"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 4"
+                    android:text="Aceites"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -144,19 +146,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod5"
+                    android:src="@drawable/img_sacos"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 5"
+                    android:text="Sacos"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -168,19 +169,18 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:padding="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:src="@drawable/img_prod6"
+                    android:src="@drawable/img_plasticos"
                     android:scaleType="centerCrop" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Producto 6"
+                    android:text="Lacteos"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
