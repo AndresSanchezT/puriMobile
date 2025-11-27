@@ -18,17 +18,14 @@ class PedidoViewHolder(
             // Dirección
             tvDireccion.text = pedido.cliente.direccion
 
-            // Deuda formateada
-            val deudaFormateada = String.format("Deuda: S/ %.2f", pedido.cliente.tieneCredito ?: 0.0)
-            tvDeuda.text = deudaFormateada
-
-            // Cambiar color según si tiene deuda
+            // Mostrar deuda según boolean
             if (pedido.cliente.tieneCredito == true) {
+                tvDeuda.text = "1250.30"
                 tvDeuda.setTextColor(
                     itemView.context.getColor(android.R.color.holo_red_dark)
                 )
             } else {
-                tvDeuda.text = "Sin deuda"
+                tvDeuda.text = "0.0"
                 tvDeuda.setTextColor(
                     itemView.context.getColor(android.R.color.holo_green_dark)
                 )
@@ -45,4 +42,5 @@ class PedidoViewHolder(
             }
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package com.andresDev.puriapp.data.api
 
+
 import com.andresDev.puriapp.data.model.Pedido
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,3 +29,4 @@ interface PedidoApi {
     @DELETE("pedidos/{id}")
     suspend fun eliminarPedido(@Path("id") id: Long): Response<Unit>
 }
+

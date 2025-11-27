@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Dirección"
+                android:text="Direccion"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:ellipsize="end"
@@ -54,22 +54,56 @@
                 android:drawablePadding="6dp"
                 app:drawableStartCompat="@android:drawable/ic_dialog_map"
                 app:drawableTint="@android:color/darker_gray"
-                tools:text="Av. Los Pinos 123, San Isidro, Lima" />
+                tools:text="Mz B lote4 santa cruz" />
 
-            <!-- Deuda -->
+
+            <!-- Observaciones -->
             <TextView
-                android:id="@+id/tvDeuda"
+                android:id="@+id/tvObservaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Observaciones"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:drawablePadding="6dp"
+                app:drawableTint="@android:color/darker_gray"
+                tools:text="No quizo ningun producto" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="S/ 0.00"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/holo_red_dark"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:background="@drawable/bg_deuda"
-                tools:text="Deuda: S/ 1,250.50" />
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tvEstado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_deuda"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="PENDIENTE" />
+
+                <TextView
+                    android:id="@+id/tvFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_deuda"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="12/02/2025 18:23" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

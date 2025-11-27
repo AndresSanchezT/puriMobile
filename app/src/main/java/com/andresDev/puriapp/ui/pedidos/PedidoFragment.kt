@@ -1,17 +1,19 @@
-package com.andresDev.puriapp.ui.clientes
+package com.andresDev.puriapp.ui.pedidos
 
 import android.os.Bundle
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.databinding.FragmentPedidoBinding
-import com.andresDev.puriapp.ui.pedidos.PedidoViewModel
+import com.andresDev.puriapp.ui.pedidos.adapter.PedidoAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -22,6 +24,8 @@ class PedidoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val pedidoViewModel: PedidoViewModel by viewModels()
+
+    private var textWatcher: TextWatcher? = null
 
     private val pedidoAdapter by lazy {
         PedidoAdapter(
@@ -48,6 +52,7 @@ class PedidoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initSearch()
         setupRecyclerView()
         observePedidos()
     }
@@ -98,8 +103,17 @@ class PedidoFragment : Fragment() {
         // findNavController().navigate(action)
     }
 
+    private fun initSearch() {
+        textWatcher = binding.etBuscarPedido.addTextChangedListener { text ->
+            pedidoViewModel.filtrarPedidos(text.toString())
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        // Remover el listener antes de liberar el binding
+        textWatcher?.let { binding.etBuscarPedido.removeTextChangedListener(it) }
+        textWatcher = null
         _binding = null
     }
 }

@@ -20,7 +20,6 @@ class ClienteViewModel @Inject constructor(
     private val _clientes = MutableStateFlow<List<Cliente>>(emptyList())
     val clientes = _clientes.asStateFlow()
 
-    private val _allClientes = mutableListOf<Cliente>() // cache en memoria
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
@@ -38,9 +37,6 @@ class ClienteViewModel @Inject constructor(
 
                 Log.d("DEBUG", "Datos recibidos: $lista")
                 Log.d("DEBUG", "Cantidad: ${lista.size}")
-
-                _allClientes.clear()
-                _allClientes.addAll(lista)
                 _clientes.value = lista
 
             } catch (e: Exception) {
@@ -52,22 +48,29 @@ class ClienteViewModel @Inject constructor(
     }
 
 
-    fun agregarCliente(cliente: Cliente) {
-        _allClientes.add(cliente)
-        _clientes.value = _allClientes.toList()
-    }
+//    // ⚠️ Estos métodos NO actualizan la API, solo la memoria
+//    fun agregarCliente(cliente: Cliente) {
+//        viewModelScope.launch {
+//            try {
+//                val nuevoCliente = repository.crearCliente(cliente)
+//                cargarClientes() // Recargar para actualizar UI
+//            } catch (e: Exception) {
+//                Log.e("ClienteViewModel", "Error al agregar: ${e.message}")
+//            }
+//        }
+//    }
 
-    fun actualizarCliente(cliente: Cliente) {
-        val index = _allClientes.indexOfFirst { it.id == cliente.id }
-        if (index != -1) _allClientes[index] = cliente
-        _clientes.value = _allClientes.toList()
-    }
+//    fun actualizarCliente(cliente: Cliente) {
+//        val index = _allClientes.indexOfFirst { it.id == cliente.id }
+//        if (index != -1) _allClientes[index] = cliente
+//        _clientes.value = _allClientes.toList()
+//    }
 
     //AÑADIR FILTRO SI ESTA VISITADO O NO
-    fun filtrarClientes(query: String, soloVisitados: Boolean = false) {
-        val filtrados = _allClientes.filter {
-            it.nombreContacto.contains(query, ignoreCase = true)
+    fun filtrarClientes(query: String) {
+        viewModelScope.launch {
+            val filtrados = repository.buscarEnCache(query)
+            _clientes.value = filtrados
         }
-        _clientes.value = filtrados
     }
 }

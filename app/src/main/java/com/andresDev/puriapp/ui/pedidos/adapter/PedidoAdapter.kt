@@ -1,10 +1,9 @@
-package com.andresDev.puriapp.ui.clientes
+package com.andresDev.puriapp.ui.pedidos.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.andresDev.puriapp.data.model.Cliente
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.databinding.ItemPedidoBinding
 import com.andresDev.puriapp.ui.pedidos.adapter.PedidoViewHolder

@@ -1,5 +1,6 @@
 package com.andresDev.puriapp.ui.clientes
 import android.os.Bundle
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,8 @@ class ClientesFragment : Fragment() {
     private val clienteViewModel by viewModels<ClienteViewModel>()
     private var _binding: FragmentClientesBinding? = null
     private val binding get() = _binding!!
+
+    private var textWatcher: TextWatcher? = null
 
     private lateinit var clienteAdapter: ClienteAdapter
 
@@ -66,13 +69,18 @@ class ClientesFragment : Fragment() {
     }
 
     private fun initSearch() {
-        binding.etBuscarCliente.addTextChangedListener { text ->
+
+        textWatcher = binding.etBuscarCliente.addTextChangedListener { text ->
             clienteViewModel.filtrarClientes(text.toString())
         }
     }
 
     override fun onDestroyView() {
+
         super.onDestroyView()
+        // Remover el listener antes de liberar el binding
+        textWatcher?.let { binding.etBuscarCliente.removeTextChangedListener(it) }
+        textWatcher = null
         _binding = null
     }
 }

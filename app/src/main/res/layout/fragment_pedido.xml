@@ -8,16 +8,6 @@
     android:padding="16dp"
     android:background="@color/primary">
 
-    <!-- LOGO CENTRADO -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/ivLogoCliente"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:src="@drawable/img_logo"
-        android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/CircularImage"/>
-
     <!-- TÍTULO -->
     <TextView
         android:id="@+id/tvTituloPedido"

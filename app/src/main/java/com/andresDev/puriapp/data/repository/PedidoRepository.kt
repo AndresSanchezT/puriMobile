@@ -13,8 +13,17 @@ class PedidoRepository @Inject constructor(
 
     suspend fun obtenerPedidos(forceRefresh: Boolean = false): List<Pedido> {
         if (cachePedidos.isEmpty() || forceRefresh) {
-            cachePedidos = apiService.obtenerPedidos()
+
+            val response = apiService.obtenerPedidos()
+
+            if (response.isSuccessful) {
+                cachePedidos = response.body() ?: emptyList()
+            } else {
+                // Manejo básico de error (no crashea)
+                throw Exception("Error HTTP: ${response.code()}")
+            }
         }
+
         return cachePedidos
     }
 

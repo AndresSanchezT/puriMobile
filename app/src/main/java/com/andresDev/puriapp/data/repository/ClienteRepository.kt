@@ -26,4 +26,8 @@ class ClienteRepository @Inject constructor(
             it.nombreContacto.contains(query, ignoreCase = true)
         }
     }
+
+    suspend fun crearCliente(cliente: Cliente){
+
+    }
 }

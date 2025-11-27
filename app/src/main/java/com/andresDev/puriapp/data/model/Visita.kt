@@ -5,6 +5,6 @@ data class Visita(
     val vendedor: Usuario,
     val cliente: Cliente,
     val fecha: String?,
-    val estrado: String?,
+    val estado: String?,
     val observaciones: String?
 )
