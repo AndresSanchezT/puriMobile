@@ -2,6 +2,7 @@ package com.andresDev.puriapp.data.api
 
 
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,8 +18,13 @@ interface PedidoApi {
     @GET("pedidos/{id}")
     suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<Pedido>
 
-    @POST("pedidos")
-    suspend fun crearPedido(@Body pedido: Pedido): Response<Pedido>
+    @POST("pedidos/registrar/{idCliente}/{idVendedor}")
+    suspend fun registrarPedido(
+        @Path("idCliente") idCliente: Long,
+        @Path("idVendedor") idVendedor: Long,
+        @Body pedidoRequest: PedidoRequest
+    ): Response<Pedido>
+
 
     @PUT("pedidos/{id}")
     suspend fun actualizarPedido(

@@ -2,6 +2,7 @@ package com.andresDev.puriapp.di
 
 import com.andresDev.puriapp.data.api.ClienteApi
 import com.andresDev.puriapp.data.api.PedidoApi
+import com.andresDev.puriapp.data.api.ProductoApi
 import com.andresDev.puriapp.data.api.VisitaApi
 import dagger.Module
 import dagger.Provides
@@ -39,4 +40,9 @@ object AppModule {
     @Singleton
     fun provideVisitaApi(retrofit: Retrofit): VisitaApi =
         retrofit.create(VisitaApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideProductoApi(retrofit: Retrofit): ProductoApi =
+        retrofit.create(ProductoApi::class.java)
 }

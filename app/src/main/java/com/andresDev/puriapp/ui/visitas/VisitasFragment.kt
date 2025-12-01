@@ -44,7 +44,7 @@ class VisitasFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentVisitasBinding.inflate(layoutInflater,container,false)
+        _binding = FragmentVisitasBinding.inflate(inflater,container,false)
         return binding.root
     }
 

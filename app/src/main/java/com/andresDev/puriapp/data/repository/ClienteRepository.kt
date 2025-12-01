@@ -13,21 +13,49 @@ class ClienteRepository @Inject constructor(
     // Cache en memoria
     private var cacheClientes: List<Cliente> = emptyList()
 
+    // Cache normalizado para búsqueda más rápida
+    private var cacheNormalizado: List<Pair<Cliente, String>> = emptyList()
+
     suspend fun obtenerClientes(): List<Cliente> {
         if (cacheClientes.isEmpty()) {
-            // Petición HTTP solo si cache está vacía
             cacheClientes = apiService.obtenerClientes()
+            // Normalizar al cargar para búsquedas más rápidas
+            cacheNormalizado = cacheClientes.map { cliente ->
+                cliente to cliente.nombreContacto.lowercase().trim()
+            }
+        }
+        return cacheClientes
+    }
+    // Búsqueda optimizada con texto normalizado
+    fun buscarEnCache(query: String): List<Cliente> {
+        if (query.isEmpty()) return cacheClientes
+
+        val queryNormalizado = query.lowercase().trim()
+
+        return cacheNormalizado
+            .filter { (_, nombreNormalizado) ->
+                nombreNormalizado.contains(queryNormalizado)
+            }
+            .map { (cliente, _) -> cliente }
+    }
+
+    suspend fun refrescarCache(): List<Cliente> {
+        cacheClientes = apiService.obtenerClientes()
+        cacheNormalizado = cacheClientes.map { cliente ->
+            cliente to cliente.nombreContacto.lowercase().trim()
         }
         return cacheClientes
     }
 
-    fun buscarEnCache(query: String): List<Cliente> {
-        return cacheClientes.filter {
-            it.nombreContacto.contains(query, ignoreCase = true)
-        }
+
+    fun limpiarCache() {
+        cacheClientes = emptyList()
+        cacheNormalizado = emptyList()
     }
 
     suspend fun crearCliente(cliente: Cliente){
 
     }
+
+
 }

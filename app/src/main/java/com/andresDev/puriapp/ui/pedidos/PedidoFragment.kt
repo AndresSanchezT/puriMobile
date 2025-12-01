@@ -10,9 +10,11 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.databinding.FragmentPedidoBinding
+import com.andresDev.puriapp.ui.clientes.ClientesFragmentDirections
 import com.andresDev.puriapp.ui.pedidos.adapter.PedidoAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,6 +57,10 @@ class PedidoFragment : Fragment() {
         initSearch()
         setupRecyclerView()
         observePedidos()
+
+        binding.btnNuevoPedido.setOnClickListener {
+                findNavController().navigate(PedidoFragmentDirections.actionPedidoFragmentToPedidoAddFragment())
+        }
     }
 
     private fun setupRecyclerView() {
