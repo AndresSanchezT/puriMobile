@@ -62,7 +62,7 @@ class ProductoPedidoAdapter(
                 tvNombreProducto.text = productoPedido.producto.nombre
                 tvCantidad.text = "x${productoPedido.cantidad}" // MODIFICADO: Formato más compacto
                 tvPrecioUnitario.text = "${formatearPrecio(productoPedido.producto.precio)} c/u" // AGREGADO: Precio unitario
-                tvPrecioItem.text = formatearPrecio(productoPedido.precioTotal)
+                tvPrecioItem.text = formatearPrecio(productoPedido.subtotal)
 
                 // ========== MODIFICADO: Botón eliminar con animación ==========
                 btnEliminar.setOnClickListener {

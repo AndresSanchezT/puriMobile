@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.andresDev.puriapp.data.model.DetallePedido
 import com.andresDev.puriapp.databinding.ItemDetallePedidoBinding
+import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse.DetallePedidoDTO
 
 
 class DetallePedidoAdapter (
 //    private val onCheckClick: (DetallePedido) -> Unit
-): ListAdapter<DetallePedido, DetallePedidoViewHolder>(DetallePedidoDiffCallback()) {
+): ListAdapter<DetallePedidoDTO, DetallePedidoViewHolder>(DetallePedidoDiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -27,17 +27,17 @@ class DetallePedidoAdapter (
         holder.bind(getItem(position))
     }
 
-    class DetallePedidoDiffCallback : DiffUtil.ItemCallback<DetallePedido>() {
+    class DetallePedidoDiffCallback : DiffUtil.ItemCallback<DetallePedidoDTO>() {
         override fun areItemsTheSame(
-            oldItem: DetallePedido,
-            newItem: DetallePedido
+            oldItem: DetallePedidoDTO,
+            newItem: DetallePedidoDTO
         ): Boolean {
-            return oldItem.producto.id == newItem.producto.id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: DetallePedido,
-            newItem: DetallePedido
+            oldItem: DetallePedidoDTO,
+            newItem: DetallePedidoDTO
         ): Boolean {
             return oldItem == newItem
         }

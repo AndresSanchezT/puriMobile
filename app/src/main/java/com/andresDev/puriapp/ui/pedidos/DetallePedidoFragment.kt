@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.databinding.FragmentDetallePedidoBinding
 import com.andresDev.puriapp.ui.pedidos.adapter.DetallePedidoAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,15 +124,15 @@ class DetallePedidoFragment : Fragment() {
         }
     }
 
-    private fun mostrarDatosPedido(pedido: Pedido) {
+    private fun mostrarDatosPedido(pedido: PedidoDetallesGeneralesResponse) {
         binding.apply {
             // Información del cliente
-            tvNombreCliente.text = pedido.cliente?.nombreContacto ?: "Sin nombre"
+            tvNombreCliente.text = pedido.cliente?.nombre ?: "Sin nombre"
             tvDireccion.text = pedido.cliente?.direccion ?: "Sin dirección"
             tvTelefono.text = pedido.cliente?.telefono ?: "Sin teléfono"
 
             // Información del pedido
-            tvVendedor.text = pedido.vendedor?.nombre ?: "Sin vendedor"
+            tvVendedor.text = pedido.vendedor?.nombreVendedor ?: "Sin vendedor"
             tvEstado.text = pedido.estado ?: "Sin estado"
             tvObservaciones.text = pedido.observaciones ?: "Sin observaciones"
 
@@ -142,7 +142,7 @@ class DetallePedidoFragment : Fragment() {
             tvTotal.text = String.format("S/ %.2f", pedido.total ?: 0.0)
 
             // Lista de productos
-            detallePedidoAdapter.submitList(pedido.detallePedido)
+            detallePedidoAdapter.submitList(pedido.detallePedidos)
         }
     }
 

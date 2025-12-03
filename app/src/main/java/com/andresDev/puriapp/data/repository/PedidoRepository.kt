@@ -2,6 +2,7 @@ package com.andresDev.puriapp.data.repository
 
 import com.andresDev.puriapp.data.api.PedidoApi
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class PedidoRepository @Inject constructor(
         return cachePedidos
     }
 
-    suspend fun obtenerPedidoPorId(id: Long): Pedido {
+    suspend fun obtenerPedidoPorId(id: Long): PedidoDetallesGeneralesResponse {
         val response = apiService.obtenerPedidoPorId(id)
 
         if (!response.isSuccessful) {

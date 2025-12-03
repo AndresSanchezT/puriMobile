@@ -375,7 +375,7 @@
                         android:id="@+id/btnAgregarProducto"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
-                        android:text="+ Agregar"
+                        android:text="Agregar"
                         android:textSize="13sp"
                         android:textAllCaps="false"
                         app:cornerRadius="8dp"

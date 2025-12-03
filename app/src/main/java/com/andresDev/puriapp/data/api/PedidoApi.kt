@@ -2,6 +2,7 @@ package com.andresDev.puriapp.data.api
 
 
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import retrofit2.Response
@@ -17,7 +18,7 @@ interface PedidoApi {
     suspend fun obtenerListaPedidos(): Response<List<PedidoListaReponse>>  // ← Devuelve Response
 
     @GET("pedidos/{id}")
-    suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<Pedido>
+    suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<PedidoDetallesGeneralesResponse>
 
     @POST("pedidos/registrar/{idCliente}/{idVendedor}")
     suspend fun registrarPedido(

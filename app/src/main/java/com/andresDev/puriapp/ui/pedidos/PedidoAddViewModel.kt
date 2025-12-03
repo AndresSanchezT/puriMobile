@@ -168,10 +168,11 @@ class PedidoAddViewModel @Inject constructor(
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
                 cantidad = productoExistente.cantidad + cantidad
+
             )
         } else {
             // Agregar nuevo producto
-            productosActuales.add(DetallePedido(producto, cantidad,null,null))
+            productosActuales.add(DetallePedido(producto, cantidad,producto.precio))
         }
 
         actualizarProductosYTotales(productosActuales)
@@ -225,7 +226,7 @@ class PedidoAddViewModel @Inject constructor(
     }
 
     private fun actualizarProductosYTotales(productos: List<DetallePedido>) {
-        val subtotal = productos.sumOf { it.precioTotal }
+        val subtotal = productos.sumOf { it.subtotal }
         val total = subtotal // Aquí puedes agregar descuentos, impuestos, etc.
 
         _uiState.update {

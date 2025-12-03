@@ -12,9 +12,8 @@ data class PedidoRequest(
 data class DetallePedido(
     val producto: Producto,
     val cantidad: Int = 1,
-    val precioUnitario: Double?,
-    val subtotal: Double?
+    val precioUnitario: Double
 ) {
-    val precioTotal: Double
-        get() = producto.precio * cantidad
+    val subtotal: Double
+        get() = precioUnitario * cantidad
 }

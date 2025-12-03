@@ -2,7 +2,7 @@ package com.andresDev.puriapp.ui.pedidos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.data.repository.PedidoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +39,6 @@ class DetallePedidoViewModel @Inject constructor(
 // Sealed class para estados
 sealed class DetallePedidoUiState {
     object Loading : DetallePedidoUiState()
-    data class Success(val pedido: Pedido) : DetallePedidoUiState()
+    data class Success(val pedido: PedidoDetallesGeneralesResponse) : DetallePedidoUiState()
     data class Error(val message: String) : DetallePedidoUiState()
 }
