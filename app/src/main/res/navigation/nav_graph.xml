@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_pedidoFragment_to_pedidoAddFragment"
             app:destination="@id/pedidoAddFragment" />
+        <action
+            android:id="@+id/action_pedidoFragment_to_detallePedidoFragment"
+            app:destination="@id/detallePedidoFragment" />
     </fragment>
     <fragment
         android:id="@+id/clientesFragment"
@@ -43,4 +46,15 @@
         android:name="com.andresDev.puriapp.ui.pedidos.PedidoAddFragment"
         android:label="fragment_pedido_add"
         tools:layout="@layout/fragment_pedido_add" />
+    <fragment
+        android:id="@+id/detallePedidoFragment"
+        android:name="com.andresDev.puriapp.ui.pedidos.DetallePedidoFragment"
+        android:label="fragment_detalle_pedido"
+        tools:layout="@layout/fragment_detalle_pedido">
+
+        <argument
+            android:name="pedidoId"
+            app:argType="long" />
+
+    </fragment>
 </navigation>

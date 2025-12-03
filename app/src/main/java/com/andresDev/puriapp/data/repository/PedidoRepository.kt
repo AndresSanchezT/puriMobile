@@ -2,6 +2,7 @@ package com.andresDev.puriapp.data.repository
 
 import com.andresDev.puriapp.data.api.PedidoApi
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,12 +11,12 @@ import javax.inject.Singleton
 class PedidoRepository @Inject constructor(
     private val apiService: PedidoApi
 ) {
-    private var cachePedidos: List<Pedido> = emptyList()
+    private var cachePedidos: List<PedidoListaReponse> = emptyList()
 
-    suspend fun obtenerPedidos(forceRefresh: Boolean = false): List<Pedido> {
+    suspend fun obtenerListaPedidos(forceRefresh: Boolean = false): List<PedidoListaReponse> {
         if (cachePedidos.isEmpty() || forceRefresh) {
 
-            val response = apiService.obtenerPedidos()
+            val response = apiService.obtenerListaPedidos()
 
             if (response.isSuccessful) {
                 cachePedidos = response.body() ?: emptyList()
@@ -28,6 +29,15 @@ class PedidoRepository @Inject constructor(
         return cachePedidos
     }
 
+    suspend fun obtenerPedidoPorId(id: Long): Pedido {
+        val response = apiService.obtenerPedidoPorId(id)
+
+        if (!response.isSuccessful) {
+            throw Exception("Error HTTP: ${response.code()}")
+        }
+
+        return response.body() ?: throw Exception("Body vacío en la respuesta")
+    }
     suspend fun registrarPedido(
         idCliente: Long,
         idVendedor: Long,
@@ -59,9 +69,9 @@ class PedidoRepository @Inject constructor(
         }
     }
 
-    fun buscarEnCache(query: String): List<Pedido> {
+    fun buscarEnCache(query: String): List<PedidoListaReponse> {
         return cachePedidos.filter {
-            it.cliente.nombreContacto.contains(query, ignoreCase = true)
+            it.nombreCliente.contains(query, ignoreCase = true)
         }
     }
 

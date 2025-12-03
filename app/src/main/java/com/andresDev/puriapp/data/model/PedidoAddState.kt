@@ -1,6 +1,10 @@
 package com.andresDev.puriapp.data.model
 
 data class PedidoAddState(
+    //Pedidos
+    val pedidoSeleccionado: Pedido? = null,
+
+
     // Clientes
     val clientes: List<Cliente> = emptyList(),
     val clienteSeleccionado: Cliente? = null,

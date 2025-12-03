@@ -2,14 +2,14 @@ package com.andresDev.puriapp.data.model
 
 data class Pedido(
     val id: Long? = null,
-    val vendedor: Usuario,
-    val cliente: Cliente,
-    val visita: Visita,
-    val fechaPedido: String?,
-    val subtotal: Double?,
-    val igv: Double?,
-    val total: Double?,
-    val estado: String?,
-    val observaciones: String?,
+    val vendedor: Usuario? = null,
+    val cliente: Cliente? = null,
+    val visita: Visita? = null,
+    val fechaPedido: String? = "",
+    val subtotal: Double?=0.0,
+    val igv: Double?=0.0,
+    val total: Double?=0.0,
+    val estado: String?="",
+    val observaciones: String?="",
     val detallePedido: List<DetallePedido> = emptyList()
 )

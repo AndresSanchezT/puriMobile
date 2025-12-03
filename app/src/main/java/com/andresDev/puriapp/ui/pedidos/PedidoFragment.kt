@@ -13,8 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.databinding.FragmentPedidoBinding
-import com.andresDev.puriapp.ui.clientes.ClientesFragmentDirections
+
 import com.andresDev.puriapp.ui.pedidos.adapter.PedidoAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,9 +36,9 @@ class PedidoFragment : Fragment() {
                 // Acción al hacer click en el check verde
                 marcarComoEntregado(pedido)
             },
-            onInfoClick = { pedido ->
-                // Acción al hacer click en info
-                verDetallePedido(pedido)
+            onInfoClick = { pedidoId ->
+                // Navegar al detalle
+                navegarADetalle(pedidoId)
             }
         )
     }
@@ -61,6 +62,9 @@ class PedidoFragment : Fragment() {
         binding.btnNuevoPedido.setOnClickListener {
                 findNavController().navigate(PedidoFragmentDirections.actionPedidoFragmentToPedidoAddFragment())
         }
+
+
+
     }
 
     private fun setupRecyclerView() {
@@ -78,10 +82,15 @@ class PedidoFragment : Fragment() {
         }
     }
 
-    private fun marcarComoEntregado(pedido: Pedido) {
+    private fun navegarADetalle(pedidoId: Long){
+        val action = PedidoFragmentDirections.actionPedidoFragmentToDetallePedidoFragment(pedidoId)
+        findNavController().navigate(action)
+    }
+
+    private fun marcarComoEntregado(pedidoListaReponse: PedidoListaReponse) {
         Toast.makeText(
             requireContext(),
-            "Cliente ${pedido.cliente.nombreContacto} marcado como entregado",
+            "Cliente ${pedidoListaReponse.nombreCliente} marcado como entregado",
             Toast.LENGTH_SHORT
         ).show()
 
@@ -91,22 +100,9 @@ class PedidoFragment : Fragment() {
         // - Navegar a un formulario de visita
     }
 
-    private fun verDetallePedido(pedido: Pedido) {
-        Toast.makeText(
-            requireContext(),
-            "Ver detalles de ${pedido.cliente.nombreContacto}",
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun verDetallePedido(pedidoId: Long) {
 
-        // Aquí puedes:
-        // - Navegar a ClienteDetailFragment
-        // - Mostrar un diálogo con más información
-        // - Navegar a una pantalla de edición
 
-        // Ejemplo con Navigation:
-        // val action = ClienteListFragmentDirections
-        //     .actionClienteListToClienteDetail(cliente.id)
-        // findNavController().navigate(action)
     }
 
     private fun initSearch() {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andresDev.puriapp.data.model.Cliente
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.repository.PedidoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRepository) :
     ViewModel() {
 
-    private val _pedidos = MutableStateFlow<List<Pedido>>(emptyList())
+    private val _pedidos = MutableStateFlow<List<PedidoListaReponse>>(emptyList())
     val pedidos = _pedidos.asStateFlow()
 
     private val _loading = MutableStateFlow(false)
@@ -33,7 +34,7 @@ class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRe
             _loading.value = true
 
             try {
-                val lista = pedidoRepository.obtenerPedidos()
+                val lista = pedidoRepository.obtenerListaPedidos()
 
                 Log.d("DEBUG", "Datos recibidos: $lista")
                 Log.d("DEBUG", "Cantidad: ${lista.size}")

@@ -2,24 +2,25 @@ package com.andresDev.puriapp.ui.pedidos.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.databinding.ItemPedidoBinding
 
 class PedidoViewHolder(
     private val binding: ItemPedidoBinding,
-    private val onCheckClick: (Pedido) -> Unit,
-    private val onInfoClick: (Pedido) -> Unit
+    private val onCheckClick: (PedidoListaReponse) -> Unit,
+    private val onInfoClick: (Long) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(pedido: Pedido) {
+    fun bind(pedidoListaReponse: PedidoListaReponse) {
         binding.apply {
             // Nombre del cliente
-            tvNombreCliente.text = pedido.cliente.nombreContacto
+            tvNombreCliente.text = pedidoListaReponse.nombreCliente
 
             // Dirección
-            tvDireccion.text = pedido.cliente.direccion
+            tvDireccion.text = pedidoListaReponse.direccion
 
             // Mostrar deuda según boolean
-            if (pedido.cliente.tieneCredito == true) {
+            if (pedidoListaReponse.tieneCredito == true) {
                 tvDeuda.text = "1250.30"
                 tvDeuda.setTextColor(
                     itemView.context.getColor(android.R.color.holo_red_dark)
@@ -33,12 +34,14 @@ class PedidoViewHolder(
 
             // Click en botón check
             btnCheck.setOnClickListener {
-                onCheckClick(pedido)
+                onCheckClick(pedidoListaReponse)
             }
 
-            // Click en botón info
+            // Botón Info - Pasa solo el ID
             btnInfo.setOnClickListener {
-                onInfoClick(pedido)
+                pedidoListaReponse.id?.let { id ->
+                    onInfoClick(id)  // ← Aquí se envía el ID al Fragment
+                }
             }
         }
     }

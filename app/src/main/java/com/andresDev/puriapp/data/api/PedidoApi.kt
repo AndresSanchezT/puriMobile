@@ -2,6 +2,7 @@ package com.andresDev.puriapp.data.api
 
 
 import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -12,8 +13,8 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface PedidoApi {
-    @GET("pedidos")
-    suspend fun obtenerPedidos(): Response<List<Pedido>>  // ← Devuelve Response
+    @GET("pedidos/all-mobile")
+    suspend fun obtenerListaPedidos(): Response<List<PedidoListaReponse>>  // ← Devuelve Response
 
     @GET("pedidos/{id}")
     suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<Pedido>
