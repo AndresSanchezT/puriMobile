@@ -24,7 +24,7 @@
             android:background="@drawable/bg_edittext"
             android:padding="6dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/img_plasticos" />
+            android:src="@drawable/img_casa" />
 
         <!-- DATOS DEL CLIENTE -->
         <LinearLayout
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bodega San Juan"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Juan Pérez"
-                android:textColor="#DDDDDD"
+                android:textColor="@android:color/black"
                 android:textSize="15sp" />
 
             <TextView
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="987654321"
-                android:textColor="#BBBBBB"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
             <TextView
@@ -69,8 +69,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Av. Perú 123 - SJM"
-                android:textColor="#BBBBBB"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
+
         </LinearLayout>
 
         <!-- ICONOS A LA DERECHA -->
@@ -95,6 +96,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_check" />
+
         </LinearLayout>
 
     </LinearLayout>

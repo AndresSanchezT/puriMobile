@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Colores básicos -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-
+    <!-- Colores de tu app (Modo Claro) -->
     <color name="primary">#1f1f1f</color>
     <color name="primaryDark">#181818</color>
     <color name="secondary">#ee9361</color>
     <color name="accent">#FFFFFF</color>
     <color name="gold">#ffe78f</color>
     <color name="black_alpha">#98000000</color>
-
     <color name="red">#FF0000</color>
+
+    <!-- Colores para Material 3 (Modo Claro) -->
+    <color name="md_theme_light_primary">#3B82F6</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_onSurface">#1E293B</color>
+    <color name="md_theme_light_background">#F5F5F5</color>
+
+    <!-- Colores para Material 3 (Modo Oscuro) -->
+    <color name="md_theme_dark_primary">#60A5FA</color>
+    <color name="md_theme_dark_onPrimary">#0F172A</color>
+    <color name="md_theme_dark_surface">#1E293B</color>
+    <color name="md_theme_dark_onSurface">#E2E8F0</color>
+    <color name="md_theme_dark_background">#0F172A</color>
 </resources>

@@ -216,33 +216,38 @@
                                     app:backgroundTint="#F1F5F9"
                                     app:iconTint="#64748B" />
 
-                                <!-- Input de Cantidad -->
-                                <com.google.android.material.textfield.TextInputLayout
-                                    android:id="@+id/tilCantidad"
-                                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                <!-- ========== NUEVO: FrameLayout con EditText Simple ========== -->
+                                <FrameLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:minHeight="56dp"
                                     android:layout_weight="1"
                                     android:layout_marginStart="8dp"
                                     android:layout_marginEnd="8dp"
-                                    app:boxCornerRadiusBottomEnd="12dp"
-                                    app:boxCornerRadiusBottomStart="12dp"
-                                    app:boxCornerRadiusTopEnd="12dp"
-                                    app:boxCornerRadiusTopStart="12dp"
-                                    app:boxStrokeColor="#E2E8F0">
+                                    android:background="@drawable/cantidad_input_background">
 
-                                    <com.google.android.material.textfield.TextInputEditText
+                                    <EditText
                                         android:id="@+id/etCantidad"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:minHeight="56dp"
+                                        android:background="@android:color/transparent"
+                                        android:gravity="center"
                                         android:inputType="number"
                                         android:text="1"
                                         android:textAlignment="center"
-                                        android:textSize="18sp"
+                                        android:textColor="#1E293B"
+                                        android:textSize="20sp"
                                         android:textStyle="bold"
-                                        android:textColor="#1E293B" />
+                                        android:paddingStart="16dp"
+                                        android:paddingEnd="16dp"
+                                        android:paddingTop="12dp"
+                                        android:paddingBottom="12dp"
+                                        android:maxLength="4"
+                                        android:lines="1"
+                                        android:maxLines="1" />
 
-                                </com.google.android.material.textfield.TextInputLayout>
+                                </FrameLayout>
 
                                 <!-- Botón Más -->
                                 <com.google.android.material.button.MaterialButton

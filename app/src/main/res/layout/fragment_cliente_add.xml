@@ -13,13 +13,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- CONTENEDOR DEL LOGO + BOTÓN CÁMARA -->
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
-            <!-- LOGO -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivLogoCliente"
                 android:layout_width="120dp"
@@ -28,7 +26,6 @@
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/CircularImage" />
 
-            <!-- BOTÓN CÁMARA -->
             <ImageButton
                 android:id="@+id/btnCambiarImagen"
                 android:layout_width="40dp"
@@ -37,11 +34,9 @@
                 android:background="@drawable/bg_circle_white"
                 android:padding="6dp"
                 android:src="@drawable/ic_camera"
-                android:contentDescription="Cambiar imagen"
-                 />
+                android:contentDescription="Cambiar imagen" />
         </FrameLayout>
 
-        <!-- TÍTULO -->
         <TextView
             android:id="@+id/tvTituloCliente"
             android:layout_width="wrap_content"
@@ -53,7 +48,6 @@
             android:textSize="24sp"
             android:layout_marginTop="12dp" />
 
-        <!-- FORMULARIO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,8 +65,8 @@
                     android:id="@+id/etNombreNegocio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#888888" />
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#555555" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Nombres y Apellidos -->
@@ -87,8 +81,8 @@
                     android:id="@+id/etNombresApellidos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#888888" />
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#555555" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Dirección -->
@@ -103,8 +97,8 @@
                     android:id="@+id/etDireccion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#888888" />
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#555555" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Referencia -->
@@ -119,8 +113,8 @@
                     android:id="@+id/etReferencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#888888" />
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#555555" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Teléfono -->
@@ -136,11 +130,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="phone"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#888888" />
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#555555" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- BOTONES -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
