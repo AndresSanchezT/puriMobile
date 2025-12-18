@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/primary">
+    android:background="@color/primary_container">
 
     <!-- LOGO CENTRADO -->
     <com.google.android.material.imageview.ShapeableImageView
@@ -16,7 +16,8 @@
         android:layout_gravity="center"
         android:src="@drawable/img_logo"
         android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/CircularImage"/>
+        app:shapeAppearanceOverlay="@style/CircularImage"
+        app:strokeColor="@color/black"     app:strokeWidth="3dp"   />
 
     <!-- TÍTULO -->
     <TextView
@@ -25,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Lista de Clientes"
-        android:textColor="@android:color/white"
+        android:textColor="@color/titulo_principal"
         android:textStyle="bold"
         android:textSize="24sp"
         android:layout_marginTop="12dp"/>
@@ -55,7 +56,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="12dp"
             android:text="Nuevo Cliente"
-            android:textColor="@android:color/white"
+            android:textColor="@color/on_primary"
             android:background="@drawable/bg_button"/>
 
     </LinearLayout>

@@ -2,6 +2,7 @@ package com.andresDev.puriapp.ui.pedidos
 
 import android.os.Bundle
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,7 @@ class PedidoFragment : Fragment() {
         initSearch()
         setupRecyclerView()
         observePedidos()
+        observarPedidoGuardado()
 
         binding.btnNuevoPedido.setOnClickListener {
                 findNavController().navigate(PedidoFragmentDirections.actionPedidoFragmentToPedidoAddFragment())
@@ -65,6 +67,23 @@ class PedidoFragment : Fragment() {
 
 
 
+    }
+
+
+    // Solo recarga cuando se guardó algo
+    private fun observarPedidoGuardado() {
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Boolean>("pedido_guardado")
+            ?.observe(viewLifecycleOwner) { guardado ->
+                if (guardado == true) {
+                    Log.d("PedidoFragment", "🔄 Recargando pedidos porque se guardó uno nuevo")
+                    pedidoViewModel.cargarPedidos()
+
+                    // Limpiar flag
+                    findNavController().currentBackStackEntry?.savedStateHandle
+                        ?.remove<Boolean>("pedido_guardado")
+                }
+            }
     }
 
     private fun setupRecyclerView() {

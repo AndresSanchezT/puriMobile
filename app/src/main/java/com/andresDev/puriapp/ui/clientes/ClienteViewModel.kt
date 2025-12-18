@@ -17,6 +17,9 @@ class ClienteViewModel @Inject constructor(
     private val repository: ClienteRepository
 ) : ViewModel() {
 
+    private val _registroClienteState = MutableStateFlow<RegistroClienteState>(RegistroClienteState.Idle)
+    val registroClienteState: StateFlow<RegistroClienteState> = _registroClienteState.asStateFlow()
+
     private val _clientes = MutableStateFlow<List<Cliente>>(emptyList())
     val clientes = _clientes.asStateFlow()
 
@@ -48,17 +51,27 @@ class ClienteViewModel @Inject constructor(
     }
 
 
-//    // ⚠️ Estos métodos NO actualizan la API, solo la memoria
-//    fun agregarCliente(cliente: Cliente) {
-//        viewModelScope.launch {
-//            try {
-//                val nuevoCliente = repository.crearCliente(cliente)
-//                cargarClientes() // Recargar para actualizar UI
-//            } catch (e: Exception) {
-//                Log.e("ClienteViewModel", "Error al agregar: ${e.message}")
-//            }
-//        }
-//    }
+    // ⚠️ Estos métodos NO actualizan la API, solo la memoria
+    fun registrarCliente(cliente: Cliente) {
+        viewModelScope.launch {
+            _registroClienteState.value = RegistroClienteState.Loading
+
+            val result = repository.registrarCliente(cliente)
+
+            result.fold(
+                onSuccess = { cliente ->
+                    _registroClienteState.value = RegistroClienteState.Success(cliente)
+                    // Refrescar la lista de clientes después del registro
+                    cargarClientes()
+                },
+                onFailure = { error ->
+                    _registroClienteState.value = RegistroClienteState.Error(
+                        error.message ?: "Error desconocido"
+                    )
+                }
+            )
+        }
+    }
 
 //    fun actualizarCliente(cliente: Cliente) {
 //        val index = _allClientes.indexOfFirst { it.id == cliente.id }

@@ -2,6 +2,11 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/secondary"/>
+    <!-- Base neutra para permitir tint -->
+    <solid android:color="@color/primary"/>
+    <!-- también puede ser transparente:
+         <solid android:color="@android:color/transparent"/> -->
+
     <corners android:radius="12dp"/>
 </shape>
+

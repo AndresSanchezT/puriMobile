@@ -5,6 +5,7 @@ data class PedidoAddState(
     val pedidoSeleccionado: Pedido? = null,
 
 
+
     // Clientes
     val clientes: List<Cliente> = emptyList(),
     val clienteSeleccionado: Cliente? = null,
@@ -16,6 +17,7 @@ data class PedidoAddState(
     // Productos
     val productos: List<Producto> = emptyList(),
     val productosFiltrados: List<Producto> = emptyList(),
+    val cantidadSeleccionada: Int = 1,
     val productoSeleccionado: Producto? = null,
 
     // Productos agregados al pedido
@@ -25,21 +27,12 @@ data class PedidoAddState(
     val isLoading: Boolean = false,
     val isLoadingProductos: Boolean = false,
     val error: String? = null,
-    val observaciones: String? = "sin observaciones",
 
     // Totales
     val subtotal: Double = 0.0,
     val total: Double = 0.0,
     val igv: Double= 0.0
 )
-// Clase para manejar productos en el pedido con su cantidad
-//data class ProductoPedido(
-//    val producto: Producto,
-//    val cantidad: Int = 1
-//) {
-//    val precioTotal: Double
-//        get() = producto.precio * cantidad
-//}
 
 
 

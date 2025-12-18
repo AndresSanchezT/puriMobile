@@ -12,6 +12,7 @@ data class PedidoRequest(
 data class DetallePedido(
     val producto: Producto,
     val cantidad: Int = 1,
+    val precioTotal: Double,
     val precioUnitario: Double
 ) {
     val subtotal: Double

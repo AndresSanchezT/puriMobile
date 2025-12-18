@@ -1,15 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Colores básicos -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Colores de tu app (Modo Claro) -->
-    <color name="primary">#1f1f1f</color>
+
+    <!-- Fondos generales (Background) -->
+    <color name="background">#FAFAFA</color>
+    <color name="background_texto">#121212</color>
+
+    <!-- Titulos y textos -->
+    <color name="titulo_principal">#000000</color>
+    <color name="subtitulos">#333333</color>
+    <color name="text_normal">#555555</color>
+    <color name="texto_desactivado">#9E9E9E</color>
+
+    <!-- Colores principales -->
+    <color name="primary">#D32F2F</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#F25863</color>
+    <color name="on_primary_container">#7A1C1C</color>
+
+
+    <!-- Colores de CARD -->
+    <color name="card">#FFFFFF</color>
+    <color name="card_variant">#F3F4F6</color>
+    <color name="texto">#1A1A1A</color>
+    <color name="card_border">#DBDBDB</color>
+
+
     <color name="primaryDark">#181818</color>
     <color name="secondary">#ee9361</color>
     <color name="accent">#FFFFFF</color>
-    <color name="gold">#ffe78f</color>
     <color name="black_alpha">#98000000</color>
     <color name="red">#FF0000</color>
 
@@ -26,4 +49,8 @@
     <color name="md_theme_dark_surface">#1E293B</color>
     <color name="md_theme_dark_onSurface">#E2E8F0</color>
     <color name="md_theme_dark_background">#0F172A</color>
+
+    <color name="gold">#FFD700</color>
+    <color name="gold_dark">#C9A227</color>
+    <color name="background_dark">#1E1E1E</color>
 </resources>

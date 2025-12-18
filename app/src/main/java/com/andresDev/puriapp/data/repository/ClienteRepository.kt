@@ -2,6 +2,8 @@ package com.andresDev.puriapp.data.repository
 
 import com.andresDev.puriapp.data.api.ClienteApi
 import com.andresDev.puriapp.data.model.Cliente
+import com.andresDev.puriapp.data.model.Pedido
+import com.andresDev.puriapp.data.model.PedidoRequest
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,6 +28,39 @@ class ClienteRepository @Inject constructor(
         }
         return cacheClientes
     }
+
+    suspend fun registrarCliente(cliente: Cliente): Result<Cliente> {
+        return try {
+            val response = apiService.registrarCliente(cliente)
+
+            if (response.isSuccessful) {
+                val clienteCreado = response.body()
+                if (clienteCreado != null) {
+                    // Limpiar cache para forzar recarga
+                    limpiarCache()
+                    Result.success(clienteCreado)
+                } else {
+                    Result.failure(Exception("Respuesta vacía del servidor"))
+                }
+            } else {
+                val errorMsg = when (response.code()) {
+                    400 -> "Datos inválidos. Verifica la información ingresada"
+                    404 -> "Cliente o vendedor no encontrado"
+                    409 -> "El cliente ya existe"
+                    500 -> "Error del servidor. Intenta más tarde"
+                    else -> "Error HTTP: ${response.code()}"
+                }
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: java.net.UnknownHostException) {
+            Result.failure(Exception("Sin conexión a internet"))
+        } catch (e: java.net.SocketTimeoutException) {
+            Result.failure(Exception("Tiempo de espera agotado"))
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión: ${e.message}"))
+        }
+    }
+
     // Búsqueda optimizada con texto normalizado
     fun buscarEnCache(query: String): List<Cliente> {
         if (query.isEmpty()) return cacheClientes
@@ -52,10 +87,5 @@ class ClienteRepository @Inject constructor(
         cacheClientes = emptyList()
         cacheNormalizado = emptyList()
     }
-
-    suspend fun crearCliente(cliente: Cliente){
-
-    }
-
 
 }

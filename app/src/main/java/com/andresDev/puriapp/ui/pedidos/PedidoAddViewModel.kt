@@ -24,7 +24,7 @@ class PedidoAddViewModel @Inject constructor(
     private val pedidoRepository: PedidoRepository
 ) : ViewModel() {
 
-     private val _uiState = MutableStateFlow(PedidoAddState())
+    private val _uiState = MutableStateFlow(PedidoAddState())
     val uiState: StateFlow<PedidoAddState> = _uiState.asStateFlow()
 
     // Flows para búsqueda con debounce
@@ -157,27 +157,34 @@ class PedidoAddViewModel @Inject constructor(
 
     // ============ MANEJO DE PRODUCTOS EN PEDIDO ============
 
-    fun agregarProducto(producto: Producto, cantidad: Int = 1) {
+    fun agregarProducto(
+        producto: Producto,
+        cantidad: Int = 1,
+        precioTotal: Double
+    ) {
         val productosActuales = _uiState.value.productosEnPedido.toMutableList()
 
-        // Verificar si el producto ya existe
         val productoExistente = productosActuales.find { it.producto.id == producto.id }
 
         if (productoExistente != null) {
-            // Actualizar cantidad
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
-                cantidad = productoExistente.cantidad + cantidad
-
+                cantidad = productoExistente.cantidad + cantidad,
+                precioTotal = productoExistente.precioTotal + precioTotal
             )
         } else {
-            // Agregar nuevo producto
-            productosActuales.add(DetallePedido(producto, cantidad,producto.precio))
+            productosActuales.add(
+                DetallePedido(
+                    producto = producto,
+                    cantidad = cantidad,
+                    precioTotal = precioTotal,
+                    precioUnitario = precioTotal/cantidad
+                )
+            )
         }
 
         actualizarProductosYTotales(productosActuales)
 
-        // Limpiar selección
         _uiState.update {
             it.copy(productoSeleccionado = null)
         }
@@ -238,7 +245,7 @@ class PedidoAddViewModel @Inject constructor(
         }
     }
 
-    fun guardarPedido() {
+    fun guardarPedido(observacion: String) {
         val state = _uiState.value
 
         // Validaciones
@@ -260,12 +267,13 @@ class PedidoAddViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
+
             val pedidoRequest = PedidoRequest(
                 subtotal = state.subtotal,
                 igv = state.igv,
                 total = state.total,
                 estado = "registrado",
-                observaciones = state.observaciones,
+                observaciones = observacion,
                 detallePedidos = state.productosEnPedido
             )
 
@@ -305,6 +313,13 @@ class PedidoAddViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 clienteSeleccionado = null,
+                productoSeleccionado = null
+            )
+        }
+    }
+    fun limpiarProductoSeleccionado() {
+        _uiState.update {
+            it.copy(
                 productoSeleccionado = null
             )
         }

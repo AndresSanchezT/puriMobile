@@ -19,18 +19,23 @@ class PedidoViewHolder(
             // Dirección
             tvDireccion.text = pedidoListaReponse.direccion
 
+            tvDeuda.text = pedidoListaReponse.total.toString()
+            tvDeuda.setTextColor(
+                itemView.context.getColor(android.R.color.holo_green_light)
+            )
+
             // Mostrar deuda según boolean
-            if (pedidoListaReponse.tieneCredito == true) {
-                tvDeuda.text = "1250.30"
-                tvDeuda.setTextColor(
-                    itemView.context.getColor(android.R.color.holo_red_dark)
-                )
-            } else {
-                tvDeuda.text = "0.0"
-                tvDeuda.setTextColor(
-                    itemView.context.getColor(android.R.color.holo_green_dark)
-                )
-            }
+//            if (pedidoListaReponse.tieneCredito == true) {
+//                tvDeuda.text = pedidoListaReponse.total.toString()
+//                tvDeuda.setTextColor(
+//                    itemView.context.getColor(android.R.color.holo_red_dark)
+//                )
+//            } else {
+//                tvDeuda.text = "0.0"
+//                tvDeuda.setTextColor(
+//                    itemView.context.getColor(android.R.color.holo_green_dark)
+//                )
+//            }
 
             // Click en botón check
             btnCheck.setOnClickListener {

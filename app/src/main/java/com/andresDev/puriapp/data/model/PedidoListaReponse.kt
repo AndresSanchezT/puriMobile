@@ -5,5 +5,6 @@ data class PedidoListaReponse(
         val estado: String,
         val tieneCredito:Boolean,
         val direccion: String,
-        val nombreCliente: String
+        val nombreCliente: String,
+        val total: Double
 )

@@ -9,4 +9,7 @@ import javax.inject.Inject
 class ClienteAddViewModel @Inject constructor(private val repository: ClienteRepository) : ViewModel() {
 
 
+    val isLoading: Boolean = false
+
+
 }

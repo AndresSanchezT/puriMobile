@@ -6,8 +6,10 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     android:padding="16dp"
+    app:cardBackgroundColor="@color/card_variant"
     app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bodega San Juan"
-                android:textColor="@android:color/black"
+                android:textColor="@color/subtitulos"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -51,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Juan Pérez"
-                android:textColor="@android:color/black"
+                android:textColor="@color/texto"
                 android:textSize="15sp" />
 
             <TextView
@@ -60,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="987654321"
-                android:textColor="@android:color/black"
+                android:textColor="@color/texto"
                 android:textSize="14sp" />
 
             <TextView
@@ -69,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Av. Perú 123 - SJM"
-                android:textColor="@android:color/black"
+                android:textColor="@color/texto"
                 android:textSize="14sp" />
 
         </LinearLayout>

@@ -1,7 +1,6 @@
 package com.andresDev.puriapp.ui.pedidos
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.andresDev.puriapp.R
 import com.andresDev.puriapp.data.model.Cliente
+import com.andresDev.puriapp.data.model.DetallePedido
 import com.andresDev.puriapp.data.model.PedidoAddState
 import com.andresDev.puriapp.data.model.Producto
 import com.andresDev.puriapp.databinding.FragmentPedidoAddBinding
@@ -107,15 +108,41 @@ class PedidoAddFragment : Fragment() {
         binding.actvProducto.threshold = 1
 
         binding.actvProducto.addTextChangedListener { text ->
-            pedidoAddViewModel.filtrarProductos(text.toString())
+            val query = text?.toString().orEmpty()
+
+            // Filtrado
+            pedidoAddViewModel.filtrarProductos(query)
+
+            if (query.isBlank()) {
+                // 🔽 Modo dropdown
+                binding.tilProducto.setEndIconDrawable(
+                    com.google.android.material.R.drawable.mtrl_dropdown_arrow
+                )
+                binding.tilProducto.setEndIconOnClickListener {
+                    binding.actvProducto.showDropDown()
+                }
+            } else {
+                // ❌ Modo limpiar
+                binding.tilProducto.setEndIconDrawable(R.drawable.ic_close)
+                binding.tilProducto.setEndIconOnClickListener {
+                    binding.actvProducto.setText("", false)
+                    ocultarControlesCantidad()
+                    pedidoAddViewModel.limpiarProductoSeleccionado()
+                }
+            }
         }
 
-        binding.actvProducto.setOnItemClickListener { parent, _, position, _ ->
+        // Estado inicial (MUY importante)
+        binding.actvProducto.text?.let {
+            binding.actvProducto.setText(it, false)
+        }
+
+        binding.actvProducto.setOnItemClickListener { _, _, position, _ ->
             val productoSeleccionado = productoAdapter.getItem(position)
 
             productoSeleccionado?.let { producto ->
                 pedidoAddViewModel.seleccionarProducto(producto)
-                binding.actvProducto.setText("", false)
+                binding.actvProducto.setText(producto.nombre, false)
                 ocultarTeclado()
                 mostrarControlesCantidad(producto)
             }
@@ -148,7 +175,7 @@ class PedidoAddFragment : Fragment() {
         binding.rvProductosAgregados.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = productoPedidoAdapter
-
+            isNestedScrollingEnabled = true
             // ========== AGREGADO: Configurar animaciones del RecyclerView ==========
             itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator().apply {
                 addDuration = 300
@@ -157,26 +184,61 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
+    // Variable de clase para guardar el precio unitario original
+    private var precioUnitarioOriginal: Double = 0.0
+
     private fun setupListeners() {
-        // ========== MODIFICADO: Botones con animación de click ==========
+        // Botones con animación de click
         binding.btnMas.setOnClickListener {
             animateButtonClick(it)
+
             val cantidadActual = binding.etCantidad.text.toString().toIntOrNull() ?: 1
-            binding.etCantidad.setText((cantidadActual + 1).toString())
+            val nuevaCantidad = cantidadActual + 1
+
+            binding.etCantidad.setText(nuevaCantidad.toString())
             actualizarPrecioProductoSeleccionado()
         }
 
         binding.btnMenos.setOnClickListener {
             animateButtonClick(it)
+
             val cantidadActual = binding.etCantidad.text.toString().toIntOrNull() ?: 1
             if (cantidadActual > 1) {
-                binding.etCantidad.setText((cantidadActual - 1).toString())
+                val nuevaCantidad = cantidadActual - 1
+
+                binding.etCantidad.setText(nuevaCantidad.toString())
                 actualizarPrecioProductoSeleccionado()
             }
         }
 
-        binding.etCantidad.addTextChangedListener {
-            actualizarPrecioProductoSeleccionado()
+        // ==========  Ajustar precio de 0.50 en 0.50 ==========
+        // Ajustar precio de 0.50 en 0.50
+        binding.btnMasPrecio.setOnClickListener {
+            animateButtonClick(it)
+            val precioActual = obtenerPrecioDelEditText()
+            val nuevoPrecio = precioActual + 0.50
+
+            // Actualizar el precio unitario original
+            precioUnitarioOriginal = nuevoPrecio
+            binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
+
+            // Resetear cantidad a 1 cuando cambias el precio manualmente
+            binding.etCantidad.setText("1")
+        }
+
+        binding.btnMenosPrecio.setOnClickListener {
+            animateButtonClick(it)
+            val precioActual = obtenerPrecioDelEditText()
+            if (precioActual >= 0.50) {
+                val nuevoPrecio = precioActual - 0.50
+
+                // Actualizar el precio unitario original
+                precioUnitarioOriginal = nuevoPrecio
+                binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
+
+                // Resetear cantidad a 1 cuando cambias el precio manualmente
+                binding.etCantidad.setText("1")
+            }
         }
 
         binding.btnAgregarProducto.setOnClickListener {
@@ -186,9 +248,43 @@ class PedidoAddFragment : Fragment() {
 
         binding.btnGuardarPedido.setOnClickListener {
             animateButtonClick(it)
-            pedidoAddViewModel.guardarPedido()
+            showLoading()
+            val observacion = binding.etObservacion.text.toString()
+            pedidoAddViewModel.guardarPedido(observacion)
         }
+
+        binding.etPrecio.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                // Cuando pierde el foco, guardar el nuevo precio unitario
+                val precioEditado = obtenerPrecioDelEditText()
+                if (precioEditado > 0) {
+                    precioUnitarioOriginal = precioEditado
+                    binding.etCantidad.setText("1")
+                }
+            }
+        }
+
     }
+
+    // ========== NUEVA FUNCIÓN: Obtener precio limpio del EditText ==========
+    private fun obtenerPrecioDelEditText(): Double {
+        val texto = binding.etPrecio.text.toString()
+        // Si está vacío, retornar 0
+        if (texto.isBlank()) return 0.0
+
+        // Intentar convertir directamente (si ya es un número sin formato)
+        texto.toDoubleOrNull()?.let { return it }
+
+        // Si tiene formato de moneda, limpiarlo
+        val limpio = texto
+            .replace("S/", "")
+            .replace(".", "")
+            .replace(",", ".")
+            .trim()
+
+        return limpio.toDoubleOrNull() ?: 0.0
+    }
+
 
     // ========== AGREGADO: Función de animación de botones ==========
     private fun animateButtonClick(view: View) {
@@ -219,14 +315,22 @@ class PedidoAddFragment : Fragment() {
     private fun updateUI(state: PedidoAddState) {
         updateClientesList(state.clientesFiltrados)
         updateProductosList(state.productosFiltrados)
-        updateProductosEnPedido(state.productosEnPedido.size)
-        updateLoadingState(state.isLoading, state.isLoadingProductos)
 
-        // ========== MODIFICADO: Actualizar totales con animación ==========
+        // ========== Actualizar RecyclerView directamente ==========
+        updateProductosEnPedido(state.productosEnPedido)
+
+        //Manejar el estado de loading principal
+        if (state.isLoading) {
+            showLoading()
+        } else {
+            // Solo ocultar si no hay loading
+            hideLoading()
+        }
+
+        updateLoadingState(state.isLoading, state.isLoadingProductos)
         animateTotalesUpdate(state)
 
         state.error?.let { error ->
-            // ========== MODIFICADO: Manejo de errores con animaciones ==========
             when (error) {
                 "success" -> {
                     hideLoading()
@@ -239,9 +343,9 @@ class PedidoAddFragment : Fragment() {
             }
         }
 
-        // ========== MODIFICADO: Visibilidad del RecyclerView con animación ==========
         animateRecyclerViewVisibility(state.productosEnPedido.isNotEmpty())
     }
+
 
     private fun updateClientesList(clientes: List<Cliente>) {
         clienteAdapter.actualizarClientes(clientes)
@@ -251,10 +355,12 @@ class PedidoAddFragment : Fragment() {
         productoAdapter.actualizarProductos(productos)
     }
 
-    private fun updateProductosEnPedido(cantidadProductos: Int) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            pedidoAddViewModel.uiState.collectLatest { state ->
-                productoPedidoAdapter.submitList(state.productosEnPedido)
+    private fun updateProductosEnPedido(productos: List<DetallePedido>) {
+        // Crear una NUEVA lista para forzar que DiffUtil detecte cambios
+        productoPedidoAdapter.submitList(productos.toList()) {
+            // Callback opcional: scroll al último item cuando se agrega uno nuevo
+            if (productos.isNotEmpty()) {
+                binding.rvProductosAgregados.smoothScrollToPosition(productos.size - 1)
             }
         }
     }
@@ -275,14 +381,14 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== MODIFICADO: Actualizar totales con animación ==========
+    // ========== Actualizar totales con animación ==========
     private fun animateTotalesUpdate(state: PedidoAddState) {
         animateTextChange(binding.tvSubtotal, formatearPrecio(state.subtotal))
         animateTextChange(binding.tvIgv, formatearPrecio(state.igv))
         animateTextChange(binding.tvTotal, formatearPrecio(state.total))
     }
 
-    // ========== AGREGADO: Función para animar cambios de texto ==========
+    // ========== Función para animar cambios de texto ==========
     private fun animateTextChange(textView: android.widget.TextView, newText: String) {
         if (textView.text != newText) {
             textView.animate()
@@ -301,7 +407,7 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== AGREGADO: Función para animar visibilidad del RecyclerView ==========
+    // ========== Función para animar visibilidad del RecyclerView ==========
     private fun animateRecyclerViewVisibility(show: Boolean) {
         if (show && binding.rvProductosAgregados.visibility != View.VISIBLE) {
             binding.rvProductosAgregados.apply {
@@ -327,7 +433,7 @@ class PedidoAddFragment : Fragment() {
     }
 
     private fun mostrarControlesCantidad(producto: Producto) {
-        // ========== MODIFICADO: Mostrar controles con animación ==========
+        // Mostrar controles con animación
         binding.layoutCantidadPrecio.apply {
             visibility = View.VISIBLE
             alpha = 0f
@@ -351,7 +457,10 @@ class PedidoAddFragment : Fragment() {
         }
 
         binding.etCantidad.setText("1")
-        binding.tvPrecio.text = formatearPrecio(producto.precio)
+        // Sin formato de moneda, solo el número
+        binding.etPrecio.setText(String.format("%.2f", producto.precio))
+
+        precioUnitarioOriginal = producto.precio
     }
 
     private fun ocultarControlesCantidad() {
@@ -374,55 +483,59 @@ class PedidoAddFragment : Fragment() {
             .start()
     }
 
+
+    // Función simplificada que usa el precio unitario guardado
     private fun actualizarPrecioProductoSeleccionado() {
         val cantidad = binding.etCantidad.text.toString().toIntOrNull() ?: 1
-        val producto = pedidoAddViewModel.uiState.value.productoSeleccionado
 
-        producto?.let {
-            val precioTotal = it.precio * cantidad
-            // ========== MODIFICADO: Actualizar precio con animación ==========
-            animateTextChange(binding.tvPrecio, formatearPrecio(precioTotal))
-        }
+        // Multiplicar el precio unitario original por la cantidad
+        val precioTotal = precioUnitarioOriginal * cantidad
+        binding.etPrecio.setText(String.format("%.2f", precioTotal))
     }
 
     private fun agregarProductoAlPedido() {
         val producto = pedidoAddViewModel.uiState.value.productoSeleccionado
         val cantidad = binding.etCantidad.text.toString().toIntOrNull() ?: 1
+        val precioTotal = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
 
         if (producto != null && cantidad > 0) {
-            pedidoAddViewModel.agregarProducto(producto, cantidad)
+            pedidoAddViewModel.agregarProducto(producto, cantidad, precioTotal)
 
             binding.actvProducto.setText("")
-            binding.etCantidad.setText("")
+            binding.etCantidad.setText("1")
             ocultarControlesCantidad()
 
-            // ========== MODIFICADO: Snackbar animado ==========
             showSuccessSnackbar("Producto agregado")
 
-            // ========== AGREGADO: Scroll suave al último item ==========
-            binding.rvProductosAgregados.smoothScrollToPosition(
-                productoPedidoAdapter.itemCount
-            )
         }
     }
 
-    // ========== AGREGADO: Función para mostrar loading ==========
+    // ========== Función para mostrar loading ==========
+
+    private fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.loadingOverlay.visibility = View.VISIBLE
+        binding.btnGuardarPedido.isEnabled = false
+    }
     private fun hideLoading() {
         binding.progressBar.visibility = View.GONE
         binding.loadingOverlay.visibility = View.GONE
         binding.btnGuardarPedido.isEnabled = true
     }
 
-    // ========== AGREGADO: Función para animación de éxito ==========
+    // ==========  Función para animación de éxito ==========
     private fun showSuccessAnimation() {
         showSuccessSnackbar("¡Pedido registrado exitosamente!")
+
+        // Marcar que se guardó un pedido
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("pedido_guardado", true)
 
         view?.postDelayed({
             findNavController().navigateUp()
         }, 1500)
     }
 
-    // ========== AGREGADO: Snackbar con estilo personalizado ==========
+    // ==========  Snackbar con estilo personalizado ==========
     private fun showSuccessSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
@@ -439,7 +552,7 @@ class PedidoAddFragment : Fragment() {
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
             .show()
 
-        // ========== AGREGADO: Efecto shake en error ==========
+        // ==========  Efecto shake en error ==========
         binding.root.animate()
             .translationX(-10f)
             .setDuration(50)
@@ -462,6 +575,7 @@ class PedidoAddFragment : Fragment() {
         val formato = NumberFormat.getCurrencyInstance(Locale("es", "PE"))
         return formato.format(precio)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -15,9 +15,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.andresDev.puriapp.data.model.Cliente
 import com.andresDev.puriapp.databinding.FragmentClienteAddBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class ClienteAddFragment : Fragment() {
@@ -98,7 +104,130 @@ class ClienteAddFragment : Fragment() {
         binding.btnCambiarImagen.setOnClickListener {
             showImagePickerOptions()
         }
+        setupListeners()
+        observeViewModel()
     }
+
+    private fun setupListeners() {
+        binding.btnAnadirCliente.setOnClickListener {
+            registrarCliente()
+        }
+
+        binding.btnLimpiarCampos.setOnClickListener {
+            limpiarFormulario()
+        }
+    }
+
+    private fun registrarCliente() {
+        // Validar campos
+        val nombreNegocio = binding.etNombreNegocio.text.toString().trim()
+        val nombresApellidos = binding.etNombresApellidos.text.toString().trim()
+        val direccion = binding.etDireccion.text.toString().trim()
+        val referencia = binding.etReferencia.text.toString().trim()
+        val telefono = binding.etTelefono.text.toString().trim()
+
+        // Validaciones
+        if (nombreNegocio.isEmpty()) {
+            binding.etNombreNegocio.error = "Campo requerido"
+            return
+        }
+
+        if (nombresApellidos.isEmpty()) {
+            binding.etNombresApellidos.error = "Campo requerido"
+            return
+        }
+
+        if (direccion.isEmpty()) {
+            binding.etDireccion.error = "Campo requerido"
+            return
+        }
+
+        if (telefono.isEmpty()) {
+            binding.etTelefono.error = "Campo requerido"
+            return
+        }
+
+        if (telefono.length < 9) {
+            binding.etTelefono.error = "Teléfono inválido"
+            return
+        }
+
+
+        // Obtener fecha y hora actual en formato ISO 8601
+        val fechaActual = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        } else {
+            // Para versiones anteriores a Android 8
+            java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                .format(java.util.Date())
+        }
+        // Crear objeto Cliente con los campos que acepta el backend
+        val nuevoCliente = Cliente(
+            id = null, // El backend lo genera
+            nombreContacto = nombresApellidos,
+            nombreNegocio = nombreNegocio,
+            direccion = direccion,
+            referencia = referencia.ifEmpty { null },
+            estado = "", // El backend lo genera
+            telefono = telefono,
+            fechaRegistro = fechaActual, // El backend lo genera
+            fechaActualizacion = null, // El backend lo genera
+            latitud = null, // Opcional por ahora
+            longitud = null, // Opcional por ahora
+            tieneCredito = false // Valor por defecto
+        )
+
+        // Deshabilitar botón mientras se procesa
+        binding.btnAnadirCliente.isEnabled = false
+
+        // Llamar al ViewModel para registrar
+        clienteViewModel.registrarCliente(nuevoCliente)
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            clienteViewModel.registroClienteState.collect { state ->
+                when (state) {
+                    is RegistroClienteState.Idle -> {
+                        // Estado inicial
+                    }
+                    is RegistroClienteState.Loading -> {
+                        // Mostrar loading
+                        binding.btnAnadirCliente.isEnabled = false
+                        Toast.makeText(requireContext(), "Registrando cliente...", Toast.LENGTH_SHORT).show()
+                    }
+                    is RegistroClienteState.Success -> {
+                        // Éxito
+                        binding.btnAnadirCliente.isEnabled = true
+                        Toast.makeText(requireContext(), "Cliente registrado exitosamente", Toast.LENGTH_LONG).show()
+                        limpiarFormulario()
+                        // Opcionalmente navegar atrás
+                         findNavController().navigateUp()
+                    }
+                    is RegistroClienteState.Error -> {
+                        // Error
+                        binding.btnAnadirCliente.isEnabled = true
+                        Toast.makeText(requireContext(), "Error: ${state.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun limpiarFormulario() {
+        binding.etNombreNegocio.text?.clear()
+        binding.etNombresApellidos.text?.clear()
+        binding.etDireccion.text?.clear()
+        binding.etReferencia.text?.clear()
+        binding.etTelefono.text?.clear()
+
+        // Limpiar errores
+        binding.etNombreNegocio.error = null
+        binding.etNombresApellidos.error = null
+        binding.etDireccion.error = null
+        binding.etTelefono.error = null
+    }
+
 
     // Selección de opción
     private fun showImagePickerOptions() {
@@ -154,8 +283,18 @@ class ClienteAddFragment : Fragment() {
         galleryLauncher.launch("image/*")
     }
 
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+}
+
+// Estados para el registro
+sealed class RegistroClienteState {
+    object Idle : RegistroClienteState()
+    object Loading : RegistroClienteState()
+    data class Success(val cliente: Cliente) : RegistroClienteState()
+    data class Error(val message: String) : RegistroClienteState()
 }
