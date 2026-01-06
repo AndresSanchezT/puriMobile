@@ -11,10 +11,20 @@ data class PedidoRequest(
 
 data class DetallePedido(
     val producto: Producto,
-    val cantidad: Int = 1,
+    val cantidad: Double = 1.0,
     val precioTotal: Double,
     val precioUnitario: Double
 ) {
     val subtotal: Double
         get() = precioUnitario * cantidad
+
+    fun cantidadFormateada(): String {
+        return if (cantidad % 1.0 == 0.0) {
+            // Si es entero, mostrar sin decimales
+            cantidad.toInt().toString()
+        } else {
+            // Si tiene decimales, mostrar con 1 decimal
+            String.format("%.1f", cantidad)
+        }
+    }
 }

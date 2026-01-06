@@ -17,7 +17,7 @@ data class PedidoAddState(
     // Productos
     val productos: List<Producto> = emptyList(),
     val productosFiltrados: List<Producto> = emptyList(),
-    val cantidadSeleccionada: Int = 1,
+    val cantidadSeleccionada: Double = 1.0,
     val productoSeleccionado: Producto? = null,
 
     // Productos agregados al pedido

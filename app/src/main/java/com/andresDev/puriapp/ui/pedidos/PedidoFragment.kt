@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.databinding.FragmentPedidoBinding
 
@@ -60,15 +59,22 @@ class PedidoFragment : Fragment() {
         setupRecyclerView()
         observePedidos()
         observarPedidoGuardado()
+        observarEntregaExitosa()
+        observarEstadoCarga()
 
         binding.btnNuevoPedido.setOnClickListener {
                 findNavController().navigate(PedidoFragmentDirections.actionPedidoFragmentToPedidoAddFragment())
         }
 
-
-
     }
-
+    private fun observarEstadoCarga() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            pedidoViewModel.loading.collect { isLoading ->
+                binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding.rvPedidos.visibility = if (isLoading) View.GONE else View.VISIBLE
+            }
+        }
+    }
 
     // Solo recarga cuando se guardó algo
     private fun observarPedidoGuardado() {
@@ -84,6 +90,38 @@ class PedidoFragment : Fragment() {
                         ?.remove<Boolean>("pedido_guardado")
                 }
             }
+    }
+
+    private fun observarEntregaExitosa() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            pedidoViewModel.pedidoEntregadoState.collect { state ->
+                when (state) {
+                    is EntregaState.Success -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "✅ Pedido marcado como entregado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        pedidoViewModel.resetearEstadoEntrega()
+                    }
+                    is EntregaState.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "❌ Error: ${state.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        pedidoViewModel.resetearEstadoEntrega()
+                    }
+                    is EntregaState.Loading -> {
+                        // Opcional: Puedes mostrar un ProgressBar aquí
+                        Log.d("PedidoFragment", "Marcando como entregado...")
+                    }
+                    is EntregaState.Idle -> {
+                        // Estado inicial, no hacer nada
+                    }
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -106,22 +144,17 @@ class PedidoFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun marcarComoEntregado(pedidoListaReponse: PedidoListaReponse) {
-        Toast.makeText(
-            requireContext(),
-            "Cliente ${pedidoListaReponse.nombreCliente} marcado como entregado",
-            Toast.LENGTH_SHORT
-        ).show()
-
-        // Aquí puedes agregar lógica para:
-        // - Crear una visita
-        // - Actualizar el estado del cliente
-        // - Navegar a un formulario de visita
-    }
-
-    private fun verDetallePedido(pedidoId: Long) {
-
-
+    private fun marcarComoEntregado(pedido: PedidoListaReponse) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar entrega")
+            .setMessage("¿Deseas marcar el pedido de ${pedido.nombreCliente} como ENTREGADO?")
+            .setPositiveButton("Sí, entregar") { _, _ ->
+                pedido.id?.let { id ->
+                    pedidoViewModel.marcarPedidoComoEntregado(id)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun initSearch() {

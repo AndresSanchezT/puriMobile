@@ -116,7 +116,7 @@ class PedidoAddFragment : Fragment() {
             if (query.isBlank()) {
                 // 🔽 Modo dropdown
                 binding.tilProducto.setEndIconDrawable(
-                    com.google.android.material.R.drawable.mtrl_dropdown_arrow
+                    R.drawable.mtrl_dropdown_arrow
                 )
                 binding.tilProducto.setEndIconOnClickListener {
                     binding.actvProducto.showDropDown()
@@ -188,37 +188,46 @@ class PedidoAddFragment : Fragment() {
     private var precioUnitarioOriginal: Double = 0.0
 
     private fun setupListeners() {
-        // Botones con animación de click
-        binding.btnMas.setOnClickListener {
-            animateButtonClick(it)
+        // 🔥 NUEVO: Listener para detectar cuando el usuario escribe en etCantidad
+        binding.etCantidad.addTextChangedListener { editable ->
+            val texto = editable?.toString() ?: ""
 
-            val cantidadActual = binding.etCantidad.text.toString().toIntOrNull() ?: 1
-            val nuevaCantidad = cantidadActual + 1
-
-            binding.etCantidad.setText(nuevaCantidad.toString())
-            actualizarPrecioProductoSeleccionado()
-        }
-
-        binding.btnMenos.setOnClickListener {
-            animateButtonClick(it)
-
-            val cantidadActual = binding.etCantidad.text.toString().toIntOrNull() ?: 1
-            if (cantidadActual > 1) {
-                val nuevaCantidad = cantidadActual - 1
-
-                binding.etCantidad.setText(nuevaCantidad.toString())
+            // Solo actualizar si hay un número válido
+            if (texto.isNotBlank()) {
                 actualizarPrecioProductoSeleccionado()
             }
         }
 
-        // ==========  Ajustar precio de 0.50 en 0.50 ==========
+        // Botón MÁS: Incrementar en 0.5
+        binding.btnMas.setOnClickListener {
+            animateButtonClick(it)
+
+            val cantidadActual = binding.etCantidad.text.toString().toDoubleOrNull() ?: 1.0
+            val nuevaCantidad = cantidadActual + 0.5
+
+            binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
+            // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
+            // porque el TextWatcher lo hará automáticamente
+        }
+
+        // Botón MENOS: Decrementar en 0.5 (mínimo 0.5)
+        binding.btnMenos.setOnClickListener {
+            animateButtonClick(it)
+
+            val cantidadActual = binding.etCantidad.text.toString().toDoubleOrNull() ?: 1.0
+            if (cantidadActual > 0.5) {
+                val nuevaCantidad = cantidadActual - 0.5
+                binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
+                // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
+            }
+        }
+
         // Ajustar precio de 0.50 en 0.50
         binding.btnMasPrecio.setOnClickListener {
             animateButtonClick(it)
             val precioActual = obtenerPrecioDelEditText()
             val nuevoPrecio = precioActual + 0.50
 
-            // Actualizar el precio unitario original
             precioUnitarioOriginal = nuevoPrecio
             binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
 
@@ -232,7 +241,6 @@ class PedidoAddFragment : Fragment() {
             if (precioActual >= 0.50) {
                 val nuevoPrecio = precioActual - 0.50
 
-                // Actualizar el precio unitario original
                 precioUnitarioOriginal = nuevoPrecio
                 binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
 
@@ -255,15 +263,38 @@ class PedidoAddFragment : Fragment() {
 
         binding.etPrecio.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                // Cuando pierde el foco, guardar el nuevo precio unitario
                 val precioEditado = obtenerPrecioDelEditText()
                 if (precioEditado > 0) {
                     precioUnitarioOriginal = precioEditado
-                    binding.etCantidad.setText("1")
+                    binding.etCantidad.setText("0.5")
                 }
             }
         }
 
+        // Validar entrada manual de cantidad
+        binding.etCantidad.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                validarYFormatearCantidad()
+            }
+        }
+    }
+
+    // ========== 3. NUEVA FUNCIÓN: Validar entrada manual ==========
+    private fun validarYFormatearCantidad() {
+        val texto = binding.etCantidad.text.toString()
+        val cantidad = texto.toDoubleOrNull() ?: 1.0
+
+        // Asegurar que sea mínimo 0.5 y múltiplo de 0.5
+        val cantidadValida = when {
+            cantidad < 0.5 -> 0.5
+            else -> {
+                // Redondear al múltiplo de 0.5 más cercano
+                (kotlin.math.round(cantidad * 2) / 2).coerceAtLeast(0.5)
+            }
+        }
+
+        binding.etCantidad.setText(String.format("%.1f", cantidadValida))
+        actualizarPrecioProductoSeleccionado()
     }
 
     // ========== NUEVA FUNCIÓN: Obtener precio limpio del EditText ==========
@@ -432,8 +463,8 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
+    // ========== 4. ACTUALIZAR mostrarControlesCantidad() ==========
     private fun mostrarControlesCantidad(producto: Producto) {
-        // Mostrar controles con animación
         binding.layoutCantidadPrecio.apply {
             visibility = View.VISIBLE
             alpha = 0f
@@ -456,8 +487,8 @@ class PedidoAddFragment : Fragment() {
                 .start()
         }
 
-        binding.etCantidad.setText("1")
-        // Sin formato de moneda, solo el número
+        // 🔥 CAMBIO: Iniciar en 0.5 en lugar de 1
+        binding.etCantidad.setText("0.5")
         binding.etPrecio.setText(String.format("%.2f", producto.precio))
 
         precioUnitarioOriginal = producto.precio
@@ -486,7 +517,7 @@ class PedidoAddFragment : Fragment() {
 
     // Función simplificada que usa el precio unitario guardado
     private fun actualizarPrecioProductoSeleccionado() {
-        val cantidad = binding.etCantidad.text.toString().toIntOrNull() ?: 1
+        val cantidad = binding.etCantidad.text.toString().toDoubleOrNull() ?: 0.5
 
         // Multiplicar el precio unitario original por la cantidad
         val precioTotal = precioUnitarioOriginal * cantidad
@@ -495,8 +526,15 @@ class PedidoAddFragment : Fragment() {
 
     private fun agregarProductoAlPedido() {
         val producto = pedidoAddViewModel.uiState.value.productoSeleccionado
-        val cantidad = binding.etCantidad.text.toString().toIntOrNull() ?: 1
+        val cantidadTexto = binding.etCantidad.text.toString()
+        val cantidad = cantidadTexto.toDoubleOrNull() ?: 1.0
         val precioTotal = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
+
+        // Validar cantidad mínima
+        if (cantidad < 0.5) {
+            showError("La cantidad mínima es 0.5")
+            return
+        }
 
         if (producto != null && cantidad > 0) {
             pedidoAddViewModel.agregarProducto(producto, cantidad, precioTotal)
@@ -506,7 +544,6 @@ class PedidoAddFragment : Fragment() {
             ocultarControlesCantidad()
 
             showSuccessSnackbar("Producto agregado")
-
         }
     }
 

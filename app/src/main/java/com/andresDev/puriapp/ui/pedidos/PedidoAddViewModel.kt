@@ -2,6 +2,7 @@ package com.andresDev.puriapp.ui.pedidos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andresDev.puriapp.data.manager.TokenManager
 import com.andresDev.puriapp.data.model.Cliente
 import com.andresDev.puriapp.data.model.DetallePedido
 import com.andresDev.puriapp.data.model.PedidoAddState
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class PedidoAddViewModel @Inject constructor(
     private val clienteRepository: ClienteRepository,
     private val productoRepository: ProductoRepository,
-    private val pedidoRepository: PedidoRepository
+    private val pedidoRepository: PedidoRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PedidoAddState())
@@ -35,6 +37,17 @@ class PedidoAddViewModel @Inject constructor(
         cargarClientes()
         cargarProductos()
         setupSearchDebounce()
+        cargarIdVendedor()
+    }
+
+    private fun cargarIdVendedor() {
+        val idVendedor = tokenManager.getUserId()
+
+        if (idVendedor != 0L) {
+            _uiState.update {
+                it.copy(idVendedor = idVendedor)
+            }
+        }
     }
 
     private fun setupSearchDebounce() {
@@ -159,7 +172,7 @@ class PedidoAddViewModel @Inject constructor(
 
     fun agregarProducto(
         producto: Producto,
-        cantidad: Int = 1,
+        cantidad: Double = 1.0,
         precioTotal: Double
     ) {
         val productosActuales = _uiState.value.productosEnPedido.toMutableList()
@@ -190,7 +203,7 @@ class PedidoAddViewModel @Inject constructor(
         }
     }
 
-    fun actualizarCantidad(productoId: Long?, nuevaCantidad: Int) {
+    fun actualizarCantidad(productoId: Long?, nuevaCantidad: Double) {
         if (nuevaCantidad <= 0) {
             eliminarProducto(productoId)
             return

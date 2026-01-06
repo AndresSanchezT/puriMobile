@@ -27,7 +27,7 @@ data class PedidoDetallesGeneralesResponse(
     data class DetallePedidoDTO(
         val id: Long,
         val producto: ProductoDTO,
-        val cantidad: Int,
+        val cantidad: Double,
         val precioUnitario: Double,
         val subtotal: Double
     ) {

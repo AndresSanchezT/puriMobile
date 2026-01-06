@@ -50,11 +50,27 @@
 
     </LinearLayout>
 
-    <!-- RECYCLERVIEW -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPedidos"
+    <!-- ✅ CONTENEDOR PARA RECYCLERVIEW Y LOADING -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp">
+
+        <!-- RECYCLERVIEW -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPedidos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- ✅ PROGRESS BAR (spinner de carga) -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </FrameLayout>
 
 </LinearLayout>

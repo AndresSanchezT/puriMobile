@@ -36,8 +36,11 @@ class ClienteRepository @Inject constructor(
             if (response.isSuccessful) {
                 val clienteCreado = response.body()
                 if (clienteCreado != null) {
-                    // Limpiar cache para forzar recarga
-                    limpiarCache()
+                    // ✅ Agregar el nuevo cliente al caché existente
+                    cacheClientes = cacheClientes + clienteCreado
+                    cacheNormalizado = cacheClientes.map { cliente ->
+                        cliente to cliente.nombreContacto.lowercase().trim()
+                    }
                     Result.success(clienteCreado)
                 } else {
                     Result.failure(Exception("Respuesta vacía del servidor"))

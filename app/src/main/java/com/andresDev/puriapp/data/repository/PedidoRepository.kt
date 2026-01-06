@@ -1,12 +1,14 @@
 package com.andresDev.puriapp.data.repository
 
 import com.andresDev.puriapp.data.api.PedidoApi
+import com.andresDev.puriapp.data.model.CambiarEstadoPedidoDTO
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.plus
 
 @Singleton  // ← ✅ IMPORTANTE para mantener el caché
 class PedidoRepository @Inject constructor(
@@ -30,6 +32,21 @@ class PedidoRepository @Inject constructor(
         return cachePedidos
     }
 
+    suspend fun marcarComoEntregado(pedidoId: Long) {
+
+        val dto = CambiarEstadoPedidoDTO(
+            nuevoEstado = "entregado", // usa mayúsculas si tu backend usa enum
+            motivoAnulacion = null
+        )
+
+        val response = apiService.cambiarEstado(pedidoId, dto)
+
+        if (!response.isSuccessful) {
+            throw Exception("Error HTTP ${response.code()}")
+        }
+
+        limpiarCache()
+    }
     suspend fun obtenerPedidoPorId(id: Long): PedidoDetallesGeneralesResponse {
         val response = apiService.obtenerPedidoPorId(id)
 
@@ -43,16 +60,16 @@ class PedidoRepository @Inject constructor(
         idCliente: Long,
         idVendedor: Long,
         pedidoRequest: PedidoRequest
-    ): Result<Pedido> {
+    ): Result<PedidoListaReponse> {
         return try {
             val response = apiService.registrarPedido(idCliente, idVendedor, pedidoRequest)
 
             if (response.isSuccessful) {
-                val pedido = response.body()
-                if (pedido != null) {
-                    // Limpiar cache para forzar recarga
-                    limpiarCache()
-                    Result.success(pedido)
+                val pedidoCreado = response.body()
+                if (pedidoCreado != null) {
+                    // ✅ Agregar el nuevo cliente al caché existente
+                    cachePedidos = cachePedidos + pedidoCreado
+                    Result.success(pedidoCreado)
                 } else {
                     Result.failure(Exception("Respuesta vacía del servidor"))
                 }

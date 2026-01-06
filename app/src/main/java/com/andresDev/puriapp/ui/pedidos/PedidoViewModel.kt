@@ -24,6 +24,9 @@ class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRe
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
+    private val _pedidoEntregadoState = MutableStateFlow<EntregaState>(EntregaState.Idle)
+    val pedidoEntregadoState: StateFlow<EntregaState> = _pedidoEntregadoState.asStateFlow()
+
     init {
         cargarPedidos()
     }
@@ -75,4 +78,33 @@ class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRe
             _pedidos.value = filtrados
         }
     }
+
+    fun marcarPedidoComoEntregado(pedidoId: Long) {
+        viewModelScope.launch {
+            try {
+                _pedidoEntregadoState.value = EntregaState.Loading
+
+                pedidoRepository.marcarComoEntregado(pedidoId)
+
+                _pedidoEntregadoState.value = EntregaState.Success
+
+                cargarPedidos() // recargar lista
+
+            } catch (e: Exception) {
+                Log.e("PedidoViewModel", "Error al marcar entregado", e)
+                _pedidoEntregadoState.value = EntregaState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    // ✅ AGREGAR: Método para resetear el estado
+    fun resetearEstadoEntrega() {
+        _pedidoEntregadoState.value = EntregaState.Idle
+    }
+}
+sealed class EntregaState {
+    object Idle : EntregaState()
+    object Loading : EntregaState()
+    object Success : EntregaState()
+    data class Error(val message: String) : EntregaState()
 }

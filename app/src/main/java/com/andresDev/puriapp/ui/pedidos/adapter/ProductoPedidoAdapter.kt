@@ -13,7 +13,7 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class ProductoPedidoAdapter(
-    private val onCantidadChanged: (Long?, Int) -> Unit,
+    private val onCantidadChanged: (Long?, Double) -> Unit,
     private val onEliminar: (Long?) -> Unit,
     private val onIncrementar: (Long?) -> Unit,
     private val onDecrementar: (Long?) -> Unit
@@ -60,7 +60,7 @@ class ProductoPedidoAdapter(
         fun bind(productoPedido: DetallePedido) {
             with(binding) {
                 tvNombreProducto.text = productoPedido.producto.nombre
-                tvCantidad.text = "x${productoPedido.cantidad}" // MODIFICADO: Formato más compacto
+                tvCantidad.text = productoPedido.cantidadFormateada() // MODIFICADO: Formato más compacto
                 tvPrecioUnitario.text = "${formatearPrecio(productoPedido.producto.precio)} c/u" // AGREGADO: Precio unitario
                 tvPrecioItem.text = formatearPrecio(productoPedido.subtotal)
 
