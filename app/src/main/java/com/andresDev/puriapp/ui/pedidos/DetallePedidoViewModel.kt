@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class DetallePedidoViewModel @Inject constructor(
@@ -95,6 +96,7 @@ class DetallePedidoViewModel @Inject constructor(
             _uiState.update { it.copy(isUpdating = true, error = null) }
 
             try {
+                
                 // Crear el pedido actualizado con los nuevos valores
                 val pedidoActualizado = pedidoCargado.copy(
                     detallePedidos = _uiState.value.productosEnPedido,
@@ -142,9 +144,11 @@ class DetallePedidoViewModel @Inject constructor(
     fun actualizarPrecioUnitario(productoId: Long?, nuevoPrecio: Double) {
         val productosActualizados = _uiState.value.productosEnPedido.map { productoPedido ->
             if (productoPedido.producto.id == productoId) {
+                val nuevoSubtotal = nuevoPrecio * productoPedido.cantidad
                 productoPedido.copy(
                     precioUnitario = nuevoPrecio,
-                    precioTotal = nuevoPrecio * productoPedido.cantidad
+                    precioTotal = nuevoPrecio * productoPedido.cantidad,
+                    subtotal = nuevoSubtotal
                 )
             } else {
                 productoPedido
@@ -161,9 +165,11 @@ class DetallePedidoViewModel @Inject constructor(
 
         val productosActualizados = _uiState.value.productosEnPedido.map { productoPedido ->
             if (productoPedido.producto.id == productoId) {
+                val nuevoSubtotal = productoPedido.precioUnitario * nuevaCantidad
                 productoPedido.copy(
                     cantidad = nuevaCantidad,
-                    precioTotal = productoPedido.precioUnitario * nuevaCantidad
+                    precioTotal = productoPedido.precioUnitario * nuevaCantidad,
+                    subtotal = nuevoSubtotal
                 )
             } else {
                 productoPedido
@@ -178,7 +184,7 @@ class DetallePedidoViewModel @Inject constructor(
                 // Calcular nuevo precio unitario basado en el subtotal deseado
 
                 productoPedido.copy(
-                    precioTotal = nuevoSubtotal
+                    subtotal = nuevoSubtotal
                 )
             } else {
                 productoPedido
@@ -228,14 +234,16 @@ class DetallePedidoViewModel @Inject constructor(
         precioTotal: Double
     ) {
         val productosActuales = _uiState.value.productosEnPedido.toMutableList()
-
         val productoExistente = productosActuales.find { it.producto.id == producto.id }
+
+        val subtotal = precioTotal
 
         if (productoExistente != null) {
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
                 cantidad = productoExistente.cantidad + cantidad,
-                precioTotal = productoExistente.subtotal + precioTotal
+                precioTotal = productoExistente.subtotal + precioTotal,
+                subtotal = productoExistente.subtotal + subtotal
             )
         } else {
             productosActuales.add(
@@ -243,7 +251,8 @@ class DetallePedidoViewModel @Inject constructor(
                     producto = producto,
                     cantidad = cantidad,
                     precioTotal = precioTotal,
-                    precioUnitario = precioTotal/cantidad
+                    precioUnitario = precioTotal / cantidad,
+                    subtotal = subtotal
                 )
             )
         }
@@ -292,6 +301,7 @@ class DetallePedidoViewModel @Inject constructor(
             )
         }
     }
+
     fun limpiarProductoSeleccionado() {
         _uiState.update {
             it.copy(

@@ -179,6 +179,8 @@ class PedidoAddViewModel @Inject constructor(
 
         val productoExistente = productosActuales.find { it.producto.id == producto.id }
 
+        val subtotal = precioTotal
+
         if (productoExistente != null) {
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
@@ -191,7 +193,8 @@ class PedidoAddViewModel @Inject constructor(
                     producto = producto,
                     cantidad = cantidad,
                     precioTotal = precioTotal,
-                    precioUnitario = precioTotal/cantidad
+                    precioUnitario = precioTotal/cantidad,
+                    subtotal = subtotal
                 )
             )
         }
@@ -211,7 +214,8 @@ class PedidoAddViewModel @Inject constructor(
 
         val productosActualizados = _uiState.value.productosEnPedido.map { productoPedido ->
             if (productoPedido.producto.id == productoId) {
-                productoPedido.copy(cantidad = nuevaCantidad)
+                val nuevoSubtotal = productoPedido.precioUnitario * nuevaCantidad
+                productoPedido.copy(cantidad = nuevaCantidad,subtotal = nuevoSubtotal)
             } else {
                 productoPedido
             }

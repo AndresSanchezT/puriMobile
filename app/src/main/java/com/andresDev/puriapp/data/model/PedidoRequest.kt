@@ -14,10 +14,9 @@ data class DetallePedido(
     val producto: Producto,
     val cantidad: Double = 1.0,
     val precioTotal: Double,
-    val precioUnitario: Double
-) {
+    val precioUnitario: Double,
     val subtotal: Double
-        get() = precioUnitario * cantidad
+) {
 
     fun cantidadFormateada(): String {
         return if (cantidad % 1.0 == 0.0) {
