@@ -1,5 +1,6 @@
 package com.andresDev.puriapp.ui.pedidos.adapter
 
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.andresDev.puriapp.data.model.DetallePedido
 import com.andresDev.puriapp.databinding.ItemDetallePedidoBinding
@@ -12,20 +13,29 @@ class DetallePedidoViewHolder(
     private val onSubtotalChanged: (Long?, Double) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private var isUpdatingFromBind = false
+    private var currentDetalle: DetallePedido? = null
+
     fun bind(detallePedido: DetallePedido) {
+        currentDetalle = detallePedido
+        isUpdatingFromBind = true
+
         binding.apply {
             tvProductoNombre.text = detallePedido.producto.nombre
             tvUnidadMedida.text = detallePedido.producto.unidadMedida
             etCantidad.setText(detallePedido.cantidad.toString())
-
             etPrecio.setText(detallePedido.precioUnitario.toString())
-            etSubtotal.setText(detallePedido.subtotal.toString())
+
+            // ⭐ Solo actualizar etSubtotal si NO tiene el foco
+            if (!etSubtotal.hasFocus()) {
+                etSubtotal.setText(detallePedido.subtotal.toString())
+            }
 
             btnEliminar.setOnClickListener {
                 animateRemove(detallePedido)
             }
 
-            // ⭐ Listener para cambios en cantidad
+            // Listener para cambios en cantidad
             etCantidad.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     val nuevaCantidad = etCantidad.text.toString().toDoubleOrNull()
@@ -35,7 +45,7 @@ class DetallePedidoViewHolder(
                 }
             }
 
-            // ⭐ Listener para cambios en precio
+            // Listener para cambios en precio
             etPrecio.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     val nuevoPrecio = etPrecio.text.toString().toDoubleOrNull()
@@ -44,17 +54,25 @@ class DetallePedidoViewHolder(
                     }
                 }
             }
+        }
 
-            // ⭐ NUEVO: Listener para cambios en subtotal
-            etSubtotal.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    val nuevoSubtotal = etSubtotal.text.toString()
-                        .replace("S/", "")
-                        .replace(",", "")
-                        .trim()
-                        .toDoubleOrNull()
+        isUpdatingFromBind = false
+        setupSubtotalListener(detallePedido)
+    }
 
-                    if (nuevoSubtotal != null && nuevoSubtotal != detallePedido.subtotal) {
+    private fun setupSubtotalListener(detallePedido: DetallePedido) {
+        binding.etSubtotal.apply {
+            // ⭐ Limpiar listener anterior
+            removeTextChangedListener(null)
+
+            // ⭐ TextWatcher para actualización en tiempo real
+            addTextChangedListener { editable ->
+                if (isUpdatingFromBind) return@addTextChangedListener
+
+                val texto = editable?.toString() ?: ""
+                if (texto.isNotBlank()) {
+                    val nuevoSubtotal = texto.toDoubleOrNull()
+                    if (nuevoSubtotal != null && nuevoSubtotal != currentDetalle?.subtotal) {
                         onSubtotalChanged(detallePedido.producto.id, nuevoSubtotal)
                     }
                 }
@@ -70,7 +88,6 @@ class DetallePedidoViewHolder(
             .setDuration(200)
             .withEndAction {
                 onEliminar(productoPedido.producto.id)
-                // Resetear valores para cuando se reutilice el ViewHolder
                 binding.root.alpha = 1f
                 binding.root.scaleX = 1f
                 binding.root.scaleY = 1f
