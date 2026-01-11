@@ -3,8 +3,7 @@ package com.andresDev.puriapp.data.model
 data class PedidoAddState(
     //Pedidos
     val pedidoSeleccionado: Pedido? = null,
-
-
+    val pedidoCargado: Pedido? = null,
 
     // Clientes
     val clientes: List<Cliente> = emptyList(),
@@ -25,6 +24,7 @@ data class PedidoAddState(
 
     // Estados
     val isLoading: Boolean = false,
+    val isUpdating: Boolean = false,
     val isLoadingProductos: Boolean = false,
     val error: String? = null,
 

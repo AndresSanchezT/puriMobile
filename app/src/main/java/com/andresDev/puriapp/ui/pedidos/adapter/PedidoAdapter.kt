@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.databinding.ItemPedidoBinding
 

@@ -3,11 +3,10 @@ package com.andresDev.puriapp.data.api
 
 import com.andresDev.puriapp.data.model.CambiarEstadoPedidoDTO
 import com.andresDev.puriapp.data.model.Pedido
-import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.data.model.PedidoRequest
 import okhttp3.ResponseBody
-import retrofit2.Call
+
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -22,8 +21,8 @@ interface PedidoApi {
     @GET("pedidos/all-mobile")
     suspend fun obtenerListaPedidos(): Response<List<PedidoListaReponse>>  // ← Devuelve Response
 
-    @GET("pedidos/{id}")
-    suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<PedidoDetallesGeneralesResponse>
+    @GET("pedidos/{id}/completo")
+    suspend fun obtenerPedidoPorId(@Path("id") id: Long): Response<Pedido>
 
     @POST("pedidos/registrar/{idCliente}/{idVendedor}")
     suspend fun registrarPedido(

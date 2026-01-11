@@ -10,6 +10,7 @@ data class PedidoRequest(
 )
 
 data class DetallePedido(
+    val id: Long? = null,
     val producto: Producto,
     val cantidad: Double = 1.0,
     val precioTotal: Double,

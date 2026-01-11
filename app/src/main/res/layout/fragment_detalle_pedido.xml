@@ -23,42 +23,42 @@
                 android:id="@+id/btnCerrar"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_close"
-                android:contentDescription="Cerrar"
-                android:clickable="true"
-                android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#64748B"
-                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true"
+                android:contentDescription="Cerrar"
+                android:focusable="true"
+                android:src="@drawable/ic_close"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#64748B" />
 
             <TextView
                 android:id="@+id/tvTitulo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="Detalle del Pedido"
+                android:textColor="#1E293B"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#1E293B"
-                android:gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnGuardar"
                 app:layout_constraintStart_toEndOf="@id/btnCerrar"
-                app:layout_constraintEnd_toStartOf="@id/btnGuardar" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardar"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Guardar"
-                android:textSize="13sp"
                 android:textAllCaps="false"
-                app:cornerRadius="8dp"
+                android:textSize="13sp"
                 app:backgroundTint="#10B981"
-                app:layout_constraintTop_toTopOf="parent"
+                app:cornerRadius="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -69,11 +69,12 @@
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="visible"
+        android:orientation="vertical"
         android:padding="32dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="gone">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -86,17 +87,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Cargando pedido..."
+            android:textColor="#1E293B"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Por favor espere"
-            android:textSize="14sp"
-            android:textColor="#64748B" />
+            android:textColor="#64748B"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -105,8 +106,8 @@
         android:id="@+id/errorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="32dp"
         android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -122,31 +123,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Error al cargar"
+            android:textColor="#1E293B"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
             android:text="No se pudo cargar el pedido"
-            android:textSize="14sp"
-            android:textColor="#64748B"
             android:textAlignment="center"
-            android:gravity="center" />
+            android:textColor="#64748B"
+            android:textSize="14sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReintentar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:paddingHorizontal="32dp"
             android:text="Reintentar"
             android:textSize="14sp"
-            android:paddingHorizontal="32dp"
-            app:cornerRadius="8dp"
             app:backgroundTint="#3B82F6"
+            app:cornerRadius="8dp"
             app:icon="@drawable/ic_refresh"
             app:iconGravity="textStart" />
 
@@ -158,7 +159,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -170,10 +172,10 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -184,34 +186,34 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:text="Información del Cliente"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
                         android:textColor="#1E293B"
-                        android:layout_marginBottom="16dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <!-- Nombre Cliente -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Cliente:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvNombreCliente"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="#1E293B"
                             tools:text="Juan Pérez García" />
 
                     </LinearLayout>
@@ -220,23 +222,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Dirección:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvDireccion"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textSize="14sp"
                             android:textColor="#1E293B"
+                            android:textSize="14sp"
                             tools:text="Av. Los Pinos 123" />
 
                     </LinearLayout>
@@ -245,23 +247,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Teléfono:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvTelefono"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textSize="14sp"
                             android:textColor="#1E293B"
+                            android:textSize="14sp"
                             tools:text="987 654 321" />
 
                     </LinearLayout>
@@ -270,23 +272,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Vendedor:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvVendedor"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textSize="14sp"
                             android:textColor="#1E293B"
+                            android:textSize="14sp"
                             tools:text="María García" />
 
                     </LinearLayout>
@@ -295,26 +297,26 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Estado:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvEstado"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/bg_estado_chip"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="4dp"
-                            android:background="@drawable/bg_estado_chip"
+                            android:textColor="#10B981"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            android:textColor="#10B981"
                             tools:text="Pendiente" />
 
                     </LinearLayout>
@@ -329,17 +331,17 @@
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Observ.:"
-                            android:textSize="14sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvObservaciones"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textSize="14sp"
-                            android:textColor="#1E293B"
                             android:fontStyle="italic"
+                            android:textColor="#1E293B"
+                            android:textSize="14sp"
                             tools:text="Entregar por la tarde" />
 
                     </LinearLayout>
@@ -352,38 +354,322 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Productos del Pedido"
+                        android:textColor="#1E293B"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#1E293B" />
+                        android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAgregarProducto"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:text="Agregar"
-                        android:textSize="13sp"
                         android:textAllCaps="false"
-                        app:cornerRadius="8dp"
+                        android:textSize="13sp"
                         app:backgroundTint="#3B82F6"
+                        app:cornerRadius="8dp"
                         app:icon="@drawable/ic_add"
                         app:iconSize="16dp" />
 
                 </LinearLayout>
+
+                <!-- ========== CARD DE AGREGAR PRODUCTO (INICIALMENTE OCULTO) ========== -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAgregarProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:letterSpacing="0.05"
+                                android:text="Nuevo Producto"
+                                android:textColor="#1E293B"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <!-- Botón para cerrar/cancelar -->
+                            <ImageView
+                                android:id="@+id/btnCerrarCardProducto"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:contentDescription="Cerrar"
+                                android:focusable="true"
+                                android:src="@drawable/ic_close"
+                                app:tint="#64748B" />
+
+                        </LinearLayout>
+
+                        <!-- AutoCompleteTextView para buscar productos -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilProducto"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Buscar producto"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxStrokeColor="#E2E8F0"
+                            app:hintTextColor="#64748B"
+                            app:startIconDrawable="@drawable/ic_search"
+                            app:startIconTint="#64748B">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/actvProducto"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="1"
+                                android:inputType="text"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Control de cantidad y precio -->
+                        <LinearLayout
+                            android:id="@+id/layoutCantidadPrecio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <!-- Sección de Cantidad -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="12dp"
+                                android:layout_weight="1.4"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Cantidad"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMenos"
+                                        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        app:backgroundTint="#F1F5F9"
+                                        app:cornerRadius="12dp"
+                                        app:icon="@drawable/ic_remove"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="0dp"
+                                        app:iconTint="#64748B" />
+
+                                    <FrameLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/cantidad_input_background"
+                                        android:minHeight="56dp">
+
+                                        <EditText
+                                            android:id="@+id/etCantidad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:background="@android:color/transparent"
+                                            android:gravity="center"
+                                            android:hint="1"
+                                            android:inputType="numberDecimal"
+                                            android:minHeight="56dp"
+                                            android:text="1"
+                                            android:textAlignment="center"
+                                            android:textColor="#1E293B"
+                                            android:textSize="24sp"
+                                            android:textStyle="bold" />
+
+                                    </FrameLayout>
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMas"
+                                        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        app:backgroundTint="#F1F5F9"
+                                        app:cornerRadius="12dp"
+                                        app:icon="@drawable/ic_add"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="0dp"
+                                        app:iconTint="#64748B" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- Sección de Precio -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Precio"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/cantidad_input_background"
+                                    android:minHeight="56dp">
+
+                                    <EditText
+                                        android:id="@+id/etPrecio"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@android:color/transparent"
+                                        android:gravity="end|center_vertical"
+                                        android:hint="0.00"
+                                        android:inputType="numberDecimal"
+                                        android:minHeight="56dp"
+                                        android:paddingStart="12dp"
+                                        android:paddingEnd="12dp"
+                                        android:text="0.00"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="#3B82F6"
+                                        android:textSize="19sp"
+                                        android:textStyle="bold" />
+
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="end"
+                                    android:orientation="horizontal">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMenosPrecio"
+                                        style="@style/Widget.Material3.Button.TonalButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginEnd="6dp"
+                                        android:insetLeft="0dp"
+                                        android:insetTop="0dp"
+                                        android:insetRight="0dp"
+                                        android:insetBottom="0dp"
+                                        android:minWidth="52dp"
+                                        android:paddingStart="10dp"
+                                        android:paddingEnd="10dp"
+                                        android:text="-0.5"
+                                        android:textColor="#EF4444"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        app:backgroundTint="#FEE2E2"
+                                        app:cornerRadius="10dp" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMasPrecio"
+                                        style="@style/Widget.Material3.Button.TonalButton"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:insetLeft="0dp"
+                                        android:insetTop="0dp"
+                                        android:insetRight="0dp"
+                                        android:insetBottom="0dp"
+                                        android:minWidth="52dp"
+                                        android:paddingStart="10dp"
+                                        android:paddingEnd="10dp"
+                                        android:text="+0.5"
+                                        android:textColor="#3B82F6"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        app:backgroundTint="#DBEAFE"
+                                        app:cornerRadius="10dp" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Botón Agregar Producto -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAgregarProductoAlPedido"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="20dp"
+                            android:text="Agregar Producto"
+                            android:textColor="#3B82F6"
+                            android:textSize="15sp"
+                            android:visibility="gone"
+                            app:backgroundTint="#EEF2FF"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_add"
+                            app:iconTint="#3B82F6"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- RecyclerView con los productos -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -391,21 +677,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_detalle_pedido"
-                    tools:itemCount="3" />
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_detalle_pedido" />
 
             </LinearLayout>
-
             <!-- Card: Totales -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -417,24 +702,24 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Subtotal:"
-                            android:textSize="15sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/tvSubtotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="#1E293B"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="#1E293B"
                             tools:text="S/ 1,250.00" />
 
                     </LinearLayout>
@@ -443,24 +728,24 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="IGV (18%):"
-                            android:textSize="15sp"
-                            android:textColor="#64748B" />
+                            android:textColor="#64748B"
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/tvIgv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="#1E293B"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="#1E293B"
                             tools:text="S/ 225.00" />
 
                     </LinearLayout>
@@ -468,8 +753,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#E2E8F0"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="12dp"
+                        android:background="#E2E8F0" />
 
                     <!-- Total -->
                     <LinearLayout
@@ -482,17 +767,17 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Total:"
+                            android:textColor="#1E293B"
                             android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="#1E293B" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="#10B981"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="#10B981"
                             tools:text="S/ 1,475.00" />
 
                     </LinearLayout>
@@ -504,5 +789,52 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Overlay de carga para actualización -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp">
+
+                <ProgressBar
+                    android:id="@+id/progressBarActualizar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:indeterminateTint="#3B82F6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Actualizando pedido..."
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,5 +11,5 @@ data class Pedido(
     val total: Double?=0.0,
     val estado: String?="",
     val observaciones: String?="",
-    val detallePedido: List<DetallePedido> = emptyList()
+    val detallePedidos: List<DetallePedido> = emptyList()
 )

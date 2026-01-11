@@ -60,9 +60,16 @@ class ProductoPedidoAdapter(
         fun bind(productoPedido: DetallePedido) {
             with(binding) {
                 tvNombreProducto.text = productoPedido.producto.nombre
-                tvCantidad.text = productoPedido.cantidadFormateada() // MODIFICADO: Formato más compacto
-                tvPrecioUnitario.text = "${formatearPrecio(productoPedido.producto.precio)} c/u" // AGREGADO: Precio unitario
+                tvCantidad.text = productoPedido.cantidadFormateada()
                 tvPrecioItem.text = formatearPrecio(productoPedido.subtotal)
+
+                // Calcular precio unitario: subtotal / cantidad
+                val precioUnitario = if (productoPedido.cantidad > 0) {
+                    productoPedido.subtotal / productoPedido.cantidad
+                } else {
+                    0.0
+                }
+                tvPrecioUnitario.text = "${formatearPrecio(precioUnitario)} c/u"
 
                 // ========== MODIFICADO: Botón eliminar con animación ==========
                 btnEliminar.setOnClickListener {

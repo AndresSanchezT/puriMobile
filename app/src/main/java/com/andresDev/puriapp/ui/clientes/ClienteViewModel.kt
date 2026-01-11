@@ -50,8 +50,6 @@ class ClienteViewModel @Inject constructor(
         }
     }
 
-
-    // ⚠️ Estos métodos NO actualizan la API, solo la memoria
     fun registrarCliente(cliente: Cliente) {
         viewModelScope.launch {
             _registroClienteState.value = RegistroClienteState.Loading
