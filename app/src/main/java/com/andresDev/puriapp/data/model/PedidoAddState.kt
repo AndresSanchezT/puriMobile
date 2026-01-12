@@ -1,6 +1,12 @@
 package com.andresDev.puriapp.data.model
 
 data class PedidoAddState(
+    //Metodos pago
+    val yape: Double = 0.0,
+    val plin: Double = 0.0,
+    val efectivo: Double = 0.0,
+    val credito: Double = 0.0,
+
     //Pedidos
     val pedidoSeleccionado: Pedido? = null,
     val pedidoCargado: Pedido? = null,

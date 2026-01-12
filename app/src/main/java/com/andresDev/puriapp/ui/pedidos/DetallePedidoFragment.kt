@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -24,7 +25,6 @@ import com.andresDev.puriapp.data.model.Producto
 import com.andresDev.puriapp.databinding.FragmentDetallePedidoBinding
 import com.andresDev.puriapp.ui.pedidos.adapter.DetallePedidoAdapter
 import com.andresDev.puriapp.ui.pedidos.adapter.ProductoArrayAdapter
-import com.andresDev.puriapp.ui.pedidos.adapter.ProductoPedidoAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -44,6 +44,10 @@ class DetallePedidoFragment : Fragment() {
 
     private lateinit var detallePedidoAdapter: DetallePedidoAdapter
     private val args: DetallePedidoFragmentArgs by navArgs()
+
+    private fun EditText.getDouble(): Double {
+        return text.toString().toDoubleOrNull() ?: 0.0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +100,10 @@ class DetallePedidoFragment : Fragment() {
             itemAnimator = null
         }
     }
+
+    private var totalPedido: Double = 0.0
+    private var totalAnterior: Double = 0.0
+
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -129,6 +137,7 @@ class DetallePedidoFragment : Fragment() {
                     state.pedidoCargado?.let { pedido ->
                         mostrarContenido()
                         mostrarDatosPedido(pedido)
+                        inicializarPagos(pedido.total ?: 0.0)
                     }
 
                     // ✅ PASO 3: Actualizar lista SOLO si el contenido está visible
@@ -140,18 +149,173 @@ class DetallePedidoFragment : Fragment() {
                     }
 
                     animateTotalesUpdate(state)
+                    // 🔥 Actualizar crédito cuando cambia el total
+                    actualizarCreditoPorCambioTotal(state.total)
                 }
             }
         }
     }
+
+    private fun actualizarCreditoPorCambioTotal(nuevoTotal: Double) {
+        // Solo actualizar si el total realmente cambió
+        if (nuevoTotal != totalAnterior && totalAnterior != 0.0) {
+            // Guardar el nuevo total
+            totalPedido = nuevoTotal
+            totalAnterior = nuevoTotal
+
+            // Recalcular crédito automáticamente
+            recalcularCredito()
+        } else if (totalAnterior == 0.0) {
+            // Primera vez que se carga
+            totalAnterior = nuevoTotal
+        }
+    }
+
+    private fun inicializarPagos(total: Double) {
+        totalPedido = total
+        totalAnterior = total
+
+        // 🔥 NUEVO: Obtener valores del pedido cargado
+        val pedido = detallePedidoViewModel.uiState.value.pedidoCargado
+
+        // Configurar Yape
+        if (pedido?.yape != null && pedido.yape > 0) {
+            binding.etYape.setText(String.format(Locale.US, "%.2f", pedido.yape))
+        } else {
+            binding.etYape.setText("")
+        }
+
+        // Configurar Plin
+        if (pedido?.plin != null && pedido.plin > 0) {
+            binding.etPlin.setText(String.format(Locale.US, "%.2f", pedido.plin))
+        } else {
+            binding.etPlin.setText("")
+        }
+
+        // Configurar Efectivo
+        if (pedido?.efectivo != null && pedido.efectivo > 0) {
+            binding.etEfectivo.setText(String.format(Locale.US, "%.2f", pedido.efectivo))
+        } else {
+            binding.etEfectivo.setText("")
+        }
+
+        // 👉 Crédito: usar el valor del pedido o calcular desde el total
+        val creditoInicial = if (pedido?.credito != null && pedido.credito > -1) {
+            pedido.credito
+        } else {
+            totalPedido
+        }
+
+        binding.etCredito.setText(
+            String.format(Locale.US, "%.2f", creditoInicial)
+        )
+
+        configurarListenersPago()
+    }
+
+    private fun validarPagos(): Boolean {
+        val yape = binding.etYape.getDouble()
+        val plin = binding.etPlin.getDouble()
+        val efectivo = binding.etEfectivo.getDouble()
+
+        val totalPagado = yape + plin + efectivo
+
+        if (totalPagado > totalPedido) {
+            mostrarErrorPago(
+                "El total pagado (S/ %.2f) supera el total del pedido (S/ %.2f)"
+                    .format(totalPagado, totalPedido)
+            )
+            return false
+        }
+
+        return true
+    }
+
+    private fun mostrarErrorPago(mensaje: String) {
+        Snackbar.make(binding.root, mensaje, Snackbar.LENGTH_LONG)
+            .setBackgroundTint(requireContext().getColor(R.color.red))
+            .setTextColor(requireContext().getColor(android.R.color.white))
+            .show()
+
+        // Opcional: vibración / shake
+        binding.cardMetodosPagos.animate()
+            .translationX(-10f)
+            .setDuration(50)
+            .withEndAction {
+                binding.cardMetodosPagos.animate()
+                    .translationX(10f)
+                    .setDuration(50)
+                    .withEndAction {
+                        binding.cardMetodosPagos.animate()
+                            .translationX(0f)
+                            .setDuration(50)
+                            .start()
+                    }
+                    .start()
+            }
+            .start()
+    }
+
+    private fun configurarListenersPago() {
+
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                recalcularCredito()
+            }
+
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        }
+
+        binding.etYape.addTextChangedListener(watcher)
+        binding.etPlin.addTextChangedListener(watcher)
+        binding.etEfectivo.addTextChangedListener(watcher)
+    }
+
+    private fun recalcularCredito() {
+        val yape = binding.etYape.getDouble()
+        val plin = binding.etPlin.getDouble()
+        val efectivo = binding.etEfectivo.getDouble()
+
+        val totalPagado = yape + plin + efectivo
+        val credito = totalPedido - totalPagado
+
+        binding.etCredito.setText(
+            String.format(Locale.US, "%.2f", credito.coerceAtLeast(0.0))
+        )
+
+        val color = if (totalPagado > totalPedido) {
+            R.color.red
+        } else {
+            R.color.red
+        }
+
+        binding.tilCredito.setBoxStrokeColor(
+            requireContext().getColor(color)
+        )
+    }
+
     // Variable de clase para guardar el precio unitario original
     private var precioUnitarioOriginal: Double = 0.0
+
     private fun setupListeners() {
         binding.btnCerrar.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.btnGuardar.setOnClickListener {
+            if (!validarPagos()) {
+                return@setOnClickListener
+            }
+
+            detallePedidoViewModel.actualizarPagos(
+                yape = binding.etYape.getDouble(),
+                plin = binding.etPlin.getDouble(),
+                efectivo = binding.etEfectivo.getDouble(),
+                credito = binding.etCredito.getDouble()
+            )
+
             detallePedidoViewModel.actualizarPedido()
         }
 
@@ -173,8 +337,6 @@ class DetallePedidoFragment : Fragment() {
             val nuevaCantidad = cantidadActual + 0.5
 
             binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
-            // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
-            // porque el TextWatcher lo hará automáticamente
         }
 
         binding.btnMenos.setOnClickListener {
@@ -184,7 +346,6 @@ class DetallePedidoFragment : Fragment() {
             if (cantidadActual > 0.5) {
                 val nuevaCantidad = cantidadActual - 0.5
                 binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
-                // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
             }
         }
 
@@ -371,16 +532,12 @@ class DetallePedidoFragment : Fragment() {
         }
     }
 
-    // ========== NUEVA FUNCIÓN: Obtener precio limpio del EditText ==========
     private fun obtenerPrecioDelEditText(): Double {
         val texto = binding.etPrecio.text.toString()
-        // Si está vacío, retornar 0
         if (texto.isBlank()) return 0.0
 
-        // Intentar convertir directamente (si ya es un número sin formato)
         texto.toDoubleOrNull()?.let { return it }
 
-        // Si tiene formato de moneda, limpiarlo
         val limpio = texto
             .replace("S/", "")
             .replace(".", "")
@@ -395,14 +552,11 @@ class DetallePedidoFragment : Fragment() {
     }
 
     private fun updateProductosEnPedido(productos: List<DetallePedido>) {
-        // Debug logs (eliminar en producción)
         android.util.Log.d("DetallePedido", "📦 Actualizando: ${productos.size} items")
 
-        // Crear nueva lista para forzar detección de cambios
         val nuevaLista = productos.map { it.copy() }
 
         detallePedidoAdapter.submitList(nuevaLista) {
-            // Callback después de actualización exitosa
             android.util.Log.d("DetallePedido", "✅ Lista actualizada en adapter")
 
             if (nuevaLista.isNotEmpty()) {
@@ -412,19 +566,16 @@ class DetallePedidoFragment : Fragment() {
             }
         }
     }
-    // ========== Función para mostrar loading ==========
 
     private fun showLoading() {
         binding.progressBar.visibility = View.VISIBLE
-//        binding.loadingOverlay.visibility = View.VISIBLE
         binding.btnGuardar.isEnabled = false
     }
+
     private fun hideLoading() {
         binding.progressBar.visibility = View.GONE
-//        binding.loadingOverlay.visibility = View.GONE
         binding.btnGuardar.isEnabled = true
     }
-
 
     private fun showError(errorMsg: String) {
         Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_LONG)
@@ -435,7 +586,6 @@ class DetallePedidoFragment : Fragment() {
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
             .show()
 
-        // ==========  Efecto shake en error ==========
         binding.root.animate()
             .translationX(-10f)
             .setDuration(50)
@@ -453,10 +603,12 @@ class DetallePedidoFragment : Fragment() {
             }
             .start()
     }
+
     private fun ocultarTeclado() {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
+
     private fun mostrarControlesCantidad(producto: Producto) {
         binding.layoutCantidadPrecio.apply {
             visibility = View.VISIBLE
@@ -480,11 +632,11 @@ class DetallePedidoFragment : Fragment() {
                 .start()
         }
 
-        // 🔥 CAMBIO: Iniciar en 0.5 en lugar de 1
         binding.etCantidad.setText("0.5")
         binding.etPrecio.setText(String.format("%.2f", producto.precio))
         precioUnitarioOriginal = producto.precio
     }
+
     private fun ocultarControlesCantidad() {
         binding.layoutCantidadPrecio.animate()
             .alpha(0f)
@@ -494,16 +646,10 @@ class DetallePedidoFragment : Fragment() {
                 binding.layoutCantidadPrecio.visibility = View.GONE
             }
             .start()
-
     }
 
     private fun confirmarAgregarProducto() {
-        // TODO: Lógica para agregar el producto al pedido
-        // Actualizar RecyclerView y totales
-
         ocultarCardAgregarProducto()
-
-        // Mostrar mensaje de éxito
         Toast.makeText(requireContext(), "Producto agregado", Toast.LENGTH_SHORT).show()
     }
 
@@ -512,7 +658,6 @@ class DetallePedidoFragment : Fragment() {
         _binding = null
     }
 
-    // ========== AGREGADO: Función de animación de botones ==========
     private fun animateButtonClick(view: View) {
         view.animate()
             .scaleX(0.9f)
@@ -528,8 +673,6 @@ class DetallePedidoFragment : Fragment() {
             .start()
     }
 
-
-    // ========== Función para animar visibilidad del RecyclerView ==========
     private fun animateRecyclerViewVisibility(show: Boolean) {
         if (show && binding.rvProductos.visibility != View.VISIBLE) {
             binding.rvProductos.apply {
@@ -563,14 +706,12 @@ class DetallePedidoFragment : Fragment() {
         }
     }
 
-    // ========== Actualizar totales con animación ==========
     private fun animateTotalesUpdate(state: PedidoAddState) {
         animateTextChange(binding.tvSubtotal, formatearPrecio(state.subtotal))
         animateTextChange(binding.tvIgv, formatearPrecio(state.igv))
         animateTextChange(binding.tvTotal, formatearPrecio(state.total))
     }
 
-    // ========== Función para animar cambios de texto ==========
     private fun animateTextChange(textView: android.widget.TextView, newText: String) {
         if (textView.text != newText) {
             textView.animate()
@@ -588,16 +729,15 @@ class DetallePedidoFragment : Fragment() {
                 .start()
         }
     }
+
     private fun formatearPrecio(precio: Double): String {
         val formato = NumberFormat.getCurrencyInstance(Locale("es", "PE"))
         return formato.format(precio)
     }
 
-    // ==========  Función para animación de éxito ==========
     private fun showSuccessAnimation() {
         showSuccessSnackbar("¡Pedido registrado exitosamente!")
 
-        // Marcar que se guardó un pedido
         findNavController().previousBackStackEntry?.savedStateHandle?.set("pedido_guardado", true)
 
         view?.postDelayed({
@@ -605,13 +745,11 @@ class DetallePedidoFragment : Fragment() {
         }, 1500)
     }
 
-    // ==========  Snackbar con estilo personalizado ==========
     private fun showSuccessSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
             .show()
     }
-
 
     companion object {
         private const val ARG_PEDIDO_ID = "pedido_id"

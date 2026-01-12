@@ -98,11 +98,17 @@ class DetallePedidoViewModel @Inject constructor(
             try {
                 
                 // Crear el pedido actualizado con los nuevos valores
+                val state = _uiState.value
+
                 val pedidoActualizado = pedidoCargado.copy(
-                    detallePedidos = _uiState.value.productosEnPedido,
-                    subtotal = _uiState.value.subtotal,
-                    igv = _uiState.value.igv,
-                    total = _uiState.value.total
+                    detallePedidos = state.productosEnPedido,
+                    subtotal = state.subtotal,
+                    igv = state.igv,
+                    total = state.total,
+                    yape = state.yape,
+                    plin = state.plin,
+                    efectivo = state.efectivo,
+                    credito = state.credito
                 )
 
                 // Llamar al repositorio para actualizar
@@ -193,6 +199,21 @@ class DetallePedidoViewModel @Inject constructor(
         actualizarProductosYTotales(productosActualizados)
     }
 
+    fun actualizarPagos(
+        yape: Double,
+        plin: Double,
+        efectivo: Double,
+        credito: Double
+    ) {
+        _uiState.update {
+            it.copy(
+                yape = yape,
+                plin = plin,
+                efectivo = efectivo,
+                credito = credito
+            )
+        }
+    }
     fun filtrarProductos(query: String) {
         _searchQueryProducto.value = query
     }

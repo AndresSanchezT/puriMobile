@@ -11,5 +11,9 @@ data class Pedido(
     val total: Double?=0.0,
     val estado: String?="",
     val observaciones: String?="",
-    val detallePedidos: List<DetallePedido> = emptyList()
+    val detallePedidos: List<DetallePedido> = emptyList(),
+    val yape: Double? = null,
+    val plin: Double? = null,
+    val credito: Double? = null,
+    val efectivo: Double? = null,
 )
