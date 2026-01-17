@@ -6,4 +6,9 @@
     <string name="cliente">Clientes</string>
     <string name="pedido">Pedidos</string>
     <string name="visita">Visitas</string>
+
+    <string name="user_profile">Perfil de usuario</string>
+    <string name="cantidad_efectivo">Cantidad Efectivo:</string>
+    <string name="cerrar_sesion">Cerrar Sesión</string>
+    <string name="formato_soles">S/. %1$.2f</string>
 </resources>

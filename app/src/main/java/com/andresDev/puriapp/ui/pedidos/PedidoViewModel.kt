@@ -3,6 +3,7 @@ package com.andresDev.puriapp.ui.pedidos
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andresDev.puriapp.data.manager.TokenManager
 import com.andresDev.puriapp.data.model.Cliente
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.data.model.PedidoListaReponse
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRepository) :
+class PedidoViewModel @Inject constructor(
+    private val pedidoRepository: PedidoRepository,
+    private val tokenManager: TokenManager) :
     ViewModel() {
 
     private val _pedidos = MutableStateFlow<List<PedidoListaReponse>>(emptyList())
@@ -27,8 +30,15 @@ class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRe
     private val _pedidoEntregadoState = MutableStateFlow<EntregaState>(EntregaState.Idle)
     val pedidoEntregadoState: StateFlow<EntregaState> = _pedidoEntregadoState.asStateFlow()
 
+    private val _efectivoDelDia = MutableStateFlow(0.0)
+    val efectivoDelDia: StateFlow<Double> = _efectivoDelDia.asStateFlow()
+
+    private val _efectivoLoading = MutableStateFlow(false)
+    val efectivoLoading: StateFlow<Boolean> = _efectivoLoading.asStateFlow()
+
     init {
         cargarPedidos()
+        actualizarEfectivoDelDia()
     }
 
     fun cargarPedidos() {
@@ -87,12 +97,44 @@ class PedidoViewModel @Inject constructor(private val pedidoRepository: PedidoRe
                 pedidoRepository.marcarComoEntregado(pedidoId)
 
                 _pedidoEntregadoState.value = EntregaState.Success
-
+                actualizarEfectivoDelDia()
                 cargarPedidos() // recargar lista
 
             } catch (e: Exception) {
                 Log.e("PedidoViewModel", "Error al marcar entregado", e)
                 _pedidoEntregadoState.value = EntregaState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun actualizarEfectivoDelDia() {
+        viewModelScope.launch {
+            _efectivoLoading.value = true
+
+            try {
+                val userId = tokenManager.getUserId() ?: 0L
+
+                if (userId == 0L) {
+                    Log.e("PedidoViewModel", "Usuario no autenticado")
+                    _efectivoDelDia.value = 0.0
+                    return@launch
+                }
+
+                val result = pedidoRepository.obtenerEfectivoDelDia(userId)
+
+                result.onSuccess { efectivo ->
+                    _efectivoDelDia.value = efectivo
+                    Log.d("PedidoViewModel", "Efectivo del día actualizado: S/. $efectivo")
+                }.onFailure { error ->
+                    Log.e("PedidoViewModel", "Error al obtener efectivo: ${error.message}")
+                    _efectivoDelDia.value = 0.0
+                }
+
+            } catch (e: Exception) {
+                Log.e("PedidoViewModel", "Excepción al actualizar efectivo", e)
+                _efectivoDelDia.value = 0.0
+            } finally {
+                _efectivoLoading.value = false
             }
         }
     }

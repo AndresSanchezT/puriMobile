@@ -38,13 +38,22 @@ interface PedidoApi {
         @Body pedido: Pedido
     ): Response<Pedido>
 
-    @PATCH("pedidos/{id}/estado")
+    @PATCH("pedidos/{id}/estado-movil")
     suspend fun cambiarEstado(
         @Path("id") id: Long,
         @Body dto: CambiarEstadoPedidoDTO
     ): Response<ResponseBody>
 
+    @GET("pedidos/efectivo-del-dia/{idRepartidor}")
+    suspend fun obtenerEfectivoDelDia(
+        @Path("idRepartidor") idRepartidor: Long
+    ): Response<EfectivoResponse>
+
     @DELETE("pedidos/{id}")
     suspend fun eliminarPedido(@Path("id") id: Long): Response<Unit>
 }
-
+data class EfectivoResponse(
+    val success: Boolean,
+    val idRepartidor: Long,
+    val efectivo: Double
+)

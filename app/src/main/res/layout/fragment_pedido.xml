@@ -50,7 +50,7 @@
 
     </LinearLayout>
 
-    <!-- ✅ CONTENEDOR PARA RECYCLERVIEW Y LOADING -->
+    <!-- ✅ CONTENEDOR PARA RECYCLERVIEW, LOADING Y EMPTY STATE -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -62,7 +62,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <!-- ✅ PROGRESS BAR (spinner de carga) -->
+        <!-- 🔥 NUEVO: MENSAJE CUANDO NO HAY PEDIDOS -->
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_empty_box"
+                android:contentDescription="Sin pedidos"
+                android:alpha="0.5"
+                android:tint="@android:color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No hay pedidos registrados"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Presiona 'Nuevo Pedido' para comenzar"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:alpha="0.7"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+
+        <!-- PROGRESS BAR (spinner de carga) -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"

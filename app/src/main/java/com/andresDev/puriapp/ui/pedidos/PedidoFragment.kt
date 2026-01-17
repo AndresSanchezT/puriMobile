@@ -71,7 +71,10 @@ class PedidoFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             pedidoViewModel.loading.collect { isLoading ->
                 binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-                binding.rvPedidos.visibility = if (isLoading) View.GONE else View.VISIBLE
+                if (isLoading) {
+                    binding.rvPedidos.visibility = View.GONE
+                    binding.emptyState.visibility = View.GONE
+                }
             }
         }
     }
@@ -135,10 +138,33 @@ class PedidoFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             pedidoViewModel.pedidos.collect { pedidos ->
                 pedidoAdapter.submitList(pedidos)
+
+                updateEmptyState(pedidos.isEmpty())
             }
         }
     }
 
+    private fun updateEmptyState(isEmpty: Boolean) {
+        val isLoading = pedidoViewModel.loading.value
+
+        when {
+            isLoading -> {
+                // Si está cargando, mostrar solo el ProgressBar
+                binding.emptyState.visibility = View.GONE
+                binding.rvPedidos.visibility = View.GONE
+            }
+            isEmpty -> {
+                // Si está vacío y NO está cargando, mostrar empty state
+                binding.emptyState.visibility = View.VISIBLE
+                binding.rvPedidos.visibility = View.GONE
+            }
+            else -> {
+                // Si hay datos, mostrar RecyclerView
+                binding.emptyState.visibility = View.GONE
+                binding.rvPedidos.visibility = View.VISIBLE
+            }
+        }
+    }
     private fun navegarADetalle(pedidoId: Long){
         val action = PedidoFragmentDirections.actionPedidoFragmentToDetallePedidoFragment(pedidoId)
         findNavController().navigate(action)

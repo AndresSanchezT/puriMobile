@@ -1,6 +1,7 @@
 package com.andresDev.puriapp.data.repository
 
 import com.andresDev.puriapp.data.api.PedidoApi
+import com.andresDev.puriapp.data.manager.TokenManager
 import com.andresDev.puriapp.data.model.CambiarEstadoPedidoDTO
 import com.andresDev.puriapp.data.model.Pedido
 import com.andresDev.puriapp.data.model.PedidoDetallesGeneralesResponse
@@ -13,7 +14,8 @@ import kotlin.collections.plus
 
 @Singleton  // ← ✅ IMPORTANTE para mantener el caché
 class PedidoRepository @Inject constructor(
-    private val apiService: PedidoApi
+    private val apiService: PedidoApi,
+    private val tokenManager: TokenManager
 ) {
     private var cachePedidos: List<PedidoListaReponse> = emptyList()
 
@@ -35,9 +37,15 @@ class PedidoRepository @Inject constructor(
 
     suspend fun marcarComoEntregado(pedidoId: Long) {
 
+        val idRepartidor = tokenManager.getUserId()
+        if (idRepartidor == 0L) {
+            throw Exception("Usuario no autenticado")
+        }
+
         val dto = CambiarEstadoPedidoDTO(
             nuevoEstado = "entregado", // usa mayúsculas si tu backend usa enum
-            motivoAnulacion = null
+            motivoAnulacion = null,
+            idRepartidor = idRepartidor
         )
 
         val response = apiService.cambiarEstado(pedidoId, dto)
@@ -125,6 +133,30 @@ class PedidoRepository @Inject constructor(
                 val errorMsg = when (response.code()) {
                     400 -> "Datos inválidos del pedido"
                     404 -> "Pedido no encontrado"  // ✅ Corregido
+                    500 -> "Error del servidor"
+                    else -> "Error HTTP: ${response.code()}"
+                }
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión: ${e.message}"))
+        }
+    }
+
+    suspend fun obtenerEfectivoDelDia(idRepartidor: Long): Result<Double> {
+        return try {
+            val response = apiService.obtenerEfectivoDelDia(idRepartidor)
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null && body.success) {
+                    Result.success(body.efectivo)
+                } else {
+                    Result.failure(Exception("Respuesta inválida del servidor"))
+                }
+            } else {
+                val errorMsg = when (response.code()) {
+                    404 -> "Repartidor no encontrado"
                     500 -> "Error del servidor"
                     else -> "Error HTTP: ${response.code()}"
                 }

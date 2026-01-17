@@ -34,6 +34,19 @@ class TokenManager @Inject constructor(
         return sharedPreferences.getLong("user_id", 0L)
     }
 
+    // ✅ MÉTODOS NUEVOS AGREGADOS
+    fun getUsername(): String? {
+        return sharedPreferences.getString("username", null)
+    }
+
+    fun getUserName(): String? {
+        return sharedPreferences.getString("nombre", null)
+    }
+
+    fun getUserRole(): String? {
+        return sharedPreferences.getString("role", null)
+    }
+
     fun getRole(): String? {
         return sharedPreferences.getString("role", null)
     }
