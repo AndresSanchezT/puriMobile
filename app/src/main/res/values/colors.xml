@@ -5,52 +5,118 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- ============================================
+         PALETA LÁCTEOS - COLORES PRINCIPALES
+         ============================================ -->
 
-    <!-- Fondos generales (Background) -->
-    <color name="background">#FAFAFA</color>
-    <color name="background_texto">#121212</color>
+    <!-- Crema (base cálida - reemplaza el azul como primario) -->
+    <color name="cream_light">#FFF8F0</color>      <!-- Fondo muy claro, casi blanco cálido -->
+    <color name="cream_medium">#F5E6D3</color>     <!-- Crema suave, fondos secundarios -->
+    <color name="cream_dark">#E8D5B7</color>       <!-- Crema más oscura, bordes y divisores -->
 
-    <!-- Titulos y textos -->
-    <color name="titulo_principal">#000000</color>
-    <color name="subtitulos">#333333</color>
-    <color name="text_normal">#555555</color>
-    <color name="texto_desactivado">#9E9E9E</color>
+    <!-- Naranja Cálida (color principal / primary) -->
+    <color name="orange_primary">#E8854D</color>   <!-- Naranja principal - botones, accents -->
+    <color name="orange_light">#F2A87A</color>     <!-- Naranja más clara - hover, tints -->
+    <color name="orange_dark">#C06530</color>      <!-- Naranja oscura - pressed, sombras -->
+    <color name="orange_container">#FDECD5</color> <!-- Fondo contenedor naranja muy claro -->
 
-    <!-- Colores principales -->
-    <color name="primary">#D32F2F</color>
-    <color name="on_primary">#FFFFFF</color>
-    <color name="primary_container">#F25863</color>
-    <color name="on_primary_container">#7A1C1C</color>
+    <!-- Verde Olivo (color secundario) -->
+    <color name="olive_primary">#6B8E5A</color>    <!-- Verde olivo principal - secundario -->
+    <color name="olive_light">#8BAD7C</color>      <!-- Verde olivo claro -->
+    <color name="olive_dark">#4A6B3A</color>       <!-- Verde olivo oscuro -->
+    <color name="olive_container">#E8F0E3</color>  <!-- Fondo contenedor verde muy claro -->
 
+    <!-- Marrón Suave (accento tierra) -->
+    <color name="brown_light">#D4A574</color>      <!-- Marrón claro - detalles decorativos -->
+    <color name="brown_medium">#A67B5B</color>     <!-- Marrón medio - textos acento -->
+    <color name="brown_dark">#6B4226</color>       <!-- Marrón oscuro - textos importantes -->
 
-    <!-- Colores de CARD -->
-    <color name="card">#FFFFFF</color>
-    <color name="card_variant">#F3F4F6</color>
-    <color name="texto">#1A1A1A</color>
-    <color name="card_border">#DBDBDB</color>
+    <!-- ============================================
+         FONDOS GENERALES (Background)
+         ============================================ -->
+    <color name="background">#FFF8F0</color>                <!-- Fondo principal (cream_light) -->
+    <color name="background_texto">#2C1810</color>          <!-- Texto sobre fondo oscuro -->
 
+    <!-- ============================================
+         TÍTULOS Y TEXTOS
+         ============================================ -->
+    <color name="titulo_principal">#2C1810</color>          <!-- Marrón muy oscuro - títulos -->
+    <color name="subtitulos">#4A3728</color>                <!-- Marrón oscuro - subtítulos -->
+    <color name="text_normal">#6B5444</color>               <!-- Marrón medio - texto normal -->
+    <color name="texto_desactivado">#A89080</color>         <!-- Marrón claro - texto desactivado -->
 
-    <color name="primaryDark">#181818</color>
-    <color name="secondary">#ee9361</color>
-    <color name="accent">#FFFFFF</color>
+    <!-- ============================================
+         COLORES PRINCIPALES (Primary)
+         ============================================ -->
+    <color name="primary">#E8854D</color>                   <!-- Naranja cálida principal -->
+    <color name="on_primary">#FFFFFF</color>                <!-- Texto sobre primary -->
+    <color name="primary_container">#FDECD5</color>         <!-- Contenedor primary claro -->
+    <color name="on_primary_container">#6B4226</color>      <!-- Texto sobre contenedor primary -->
+
+    <!-- ============================================
+         COLORES DE CARD
+         ============================================ -->
+    <color name="card">#FFFFFF</color>                      <!-- Card fondo blanco -->
+    <color name="card_variant">#FFF3E8</color>              <!-- Card variante con tono crema -->
+    <color name="texto">#2C1810</color>                     <!-- Texto dentro de cards -->
+    <color name="card_border">#E8D5B7</color>               <!-- Borde de cards (cream_dark) -->
+
+    <!-- ============================================
+         COLORES HEREDADOS / UTILITARIOS
+         ============================================ -->
+    <color name="primaryDark">#2C1810</color>               <!-- Marrón muy oscuro -->
+    <color name="secondary">#6B8E5A</color>                 <!-- Verde olivo (secundario) -->
+    <color name="accent">#E8854D</color>                    <!-- Accent = naranja principal -->
     <color name="black_alpha">#98000000</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#E53935</color>                       <!-- Rojo de errores -->
 
-    <!-- Colores para Material 3 (Modo Claro) -->
-    <color name="md_theme_light_primary">#3B82F6</color>
+    <!-- ============================================
+         COLORES PARA MATERIAL 3 (Modo Claro)
+         ============================================ -->
+    <color name="md_theme_light_primary">#E8854D</color>            <!-- Naranja cálida -->
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_surface">#FFFFFF</color>
-    <color name="md_theme_light_onSurface">#1E293B</color>
-    <color name="md_theme_light_background">#F5F5F5</color>
+    <color name="md_theme_light_onSurface">#2C1810</color>          <!-- Marrón oscuro -->
+    <color name="md_theme_light_background">#FFF8F0</color>         <!-- Crema muy clara -->
+    <color name="md_theme_light_secondary">#6B8E5A</color>          <!-- Verde olivo -->
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#E8F0E3</color> <!-- Verde olivo contenedor -->
+    <color name="md_theme_light_onSecondaryContainer">#4A6B3A</color>
+    <color name="md_theme_light_error">#E53935</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FFCDD2</color>
+    <color name="md_theme_light_onErrorContainer">#B71C1C</color>
 
-    <!-- Colores para Material 3 (Modo Oscuro) -->
-    <color name="md_theme_dark_primary">#60A5FA</color>
-    <color name="md_theme_dark_onPrimary">#0F172A</color>
-    <color name="md_theme_dark_surface">#1E293B</color>
-    <color name="md_theme_dark_onSurface">#E2E8F0</color>
-    <color name="md_theme_dark_background">#0F172A</color>
+    <!-- ============================================
+         COLORES PARA MATERIAL 3 (Modo Oscuro)
+         ============================================ -->
+    <color name="md_theme_dark_primary">#F2A87A</color>             <!-- Naranja más clara -->
+    <color name="md_theme_dark_onPrimary">#2C1810</color>           <!-- Marrón muy oscuro -->
+    <color name="md_theme_dark_surface">#2C1810</color>             <!-- Superficie oscura -->
+    <color name="md_theme_dark_onSurface">#F5E6D3</color>           <!-- Crema para texto -->
+    <color name="md_theme_dark_background">#1A1008</color>          <!-- Fondo oscuro cálido -->
+    <color name="md_theme_dark_secondary">#8BAD7C</color>           <!-- Verde olivo claro -->
+    <color name="md_theme_dark_onSecondary">#1A1008</color>
+    <color name="md_theme_dark_secondaryContainer">#4A6B3A</color>
+    <color name="md_theme_dark_onSecondaryContainer">#E8F0E3</color>
+    <color name="md_theme_dark_error">#EF5350</color>
+    <color name="md_theme_dark_onError">#1A1008</color>
+    <color name="md_theme_dark_errorContainer">#B71C1C</color>
+    <color name="md_theme_dark_onErrorContainer">#FFCDD2</color>
 
-    <color name="gold">#FFD700</color>
-    <color name="gold_dark">#C9A227</color>
-    <color name="background_dark">#1E1E1E</color>
+    <!-- ============================================
+         COLORES EXTRA / ESPECIALES
+         ============================================ -->
+    <color name="gold">#D4A574</color>                      <!-- Oro → ahora marrón dorado -->
+    <color name="gold_dark">#A67B5B</color>                 <!-- Oro oscuro → marrón medio -->
+    <color name="background_dark">#1A1008</color>           <!-- Fondo oscuro modo oscuro -->
+
+    <!-- Estado de éxito (verde que combina con olivo) -->
+    <color name="success">#6B8E5A</color>
+    <color name="success_container">#E8F0E3</color>
+
+    <!-- Estado de advertencia (naranja suave) -->
+    <color name="warning">#E8854D</color>
+    <color name="warning_container">#FDECD5</color>
+
 </resources>

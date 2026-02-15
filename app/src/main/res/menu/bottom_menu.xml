@@ -21,6 +21,4 @@
         android:title="@string/visita"
         android:icon="@drawable/mercado"
         />
-
-
 </menu>

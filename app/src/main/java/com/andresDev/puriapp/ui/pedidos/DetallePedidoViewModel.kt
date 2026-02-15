@@ -252,7 +252,8 @@ class DetallePedidoViewModel @Inject constructor(
     fun agregarProducto(
         producto: Producto,
         cantidad: Double = 1.0,
-        precioTotal: Double
+        precioTotal: Double,
+        precioUnitario: Double  // ✅ NUEVO parámetro
     ) {
         val productosActuales = _uiState.value.productosEnPedido.toMutableList()
         val productoExistente = productosActuales.find { it.producto.id == producto.id }
@@ -263,16 +264,16 @@ class DetallePedidoViewModel @Inject constructor(
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
                 cantidad = productoExistente.cantidad + cantidad,
-                precioTotal = productoExistente.subtotal + precioTotal,
+                precioTotal = productoExistente.precioTotal + precioTotal,
                 subtotal = productoExistente.subtotal + subtotal
             )
         } else {
-            productosActuales.add(
+            productosActuales.add(0,
                 DetallePedido(
                     producto = producto,
                     cantidad = cantidad,
                     precioTotal = precioTotal,
-                    precioUnitario = precioTotal / cantidad,
+                    precioUnitario = precioUnitario,  // ✅ Usar parámetro
                     subtotal = subtotal
                 )
             )

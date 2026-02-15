@@ -31,11 +31,21 @@
             android:id="@+id/action_clientesFragment_to_clienteAddFragment"
             app:destination="@id/clienteAddFragment" />
     </fragment>
+
+    <!-- Fragmento para usuarios normales -->
     <fragment
         android:id="@+id/visitasFragment"
         android:name="com.andresDev.puriapp.ui.visitas.VisitasFragment"
         android:label="fragment_visitas"
         tools:layout="@layout/fragment_visitas" />
+
+    <!-- Fragmento SOLO para administradores -->
+    <fragment
+        android:id="@+id/datosPedidosFragment"
+        android:name="com.andresDev.puriapp.ui.adminData.AdminDataFragment"
+        android:label="fragment_datos_pedidos"
+        tools:layout="@layout/fragment_admin_data" />
+
     <fragment
         android:id="@+id/clienteAddFragment"
         android:name="com.andresDev.puriapp.ui.clientes.ClienteAddFragment"

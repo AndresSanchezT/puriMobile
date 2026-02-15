@@ -15,16 +15,6 @@
         android:gravity="center_horizontal"
         android:padding="16dp">
 
-        <!-- Imagen circular -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/img_logo"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/CircularImage"
-            app:strokeColor="@color/black"
-            app:strokeWidth="3dp"/>
 
         <!-- Título centrado -->
         <TextView
@@ -32,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Nuestros Productos"
+            android:text="NUESTROS PRODUCTOS"
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -65,7 +55,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lacteos"
+                    android:text="LACTEOS"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -88,7 +78,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Plasticos"
+                    android:text="PLASTICOS"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -111,7 +101,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Embutidos"
+                    android:text="EMBUTIDOS"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 
@@ -133,10 +123,10 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Aceites"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="8dp" />
+                    android:layout_height="14dp"
+                    android:layout_marginTop="8dp"
+                    android:text="ACEITES"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 
@@ -156,10 +146,10 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sacos"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="8dp" />
+                    android:layout_height="13dp"
+                    android:layout_marginTop="8dp"
+                    android:text="SACOS"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 
@@ -180,7 +170,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lacteos"
+                    android:text="LACTEOS"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="8dp" />
 

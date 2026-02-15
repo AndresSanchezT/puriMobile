@@ -1,14 +1,24 @@
 <resources>
-    <string name="app_name">PuriApp</string>
+    <string name="app_name">INVERSIONES PURI</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello Andres</string>
     <string name="producto">Productos</string>
     <string name="cliente">Clientes</string>
     <string name="pedido">Pedidos</string>
     <string name="visita">Visitas</string>
+    <string name="info">Info</string>
+
 
     <string name="user_profile">Perfil de usuario</string>
     <string name="cantidad_efectivo">Cantidad Efectivo:</string>
     <string name="cerrar_sesion">Cerrar Sesión</string>
     <string name="formato_soles">S/. %1$.2f</string>
+
+
+    <!-- ✅ NUEVO: Opciones para el Spinner de fechas -->
+    <string-array name="opciones_fecha_pedidos">
+        <item>HOY</item>
+        <item>MAÑANA</item>
+        <item>PASADO MAÑANA</item>
+    </string-array>
 </resources>

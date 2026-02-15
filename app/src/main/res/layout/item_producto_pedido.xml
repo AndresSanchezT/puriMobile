@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="14dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:strokeWidth="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E8D5B7"
     app:cardBackgroundColor="#FFFFFF">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,160 +16,169 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Icono del producto -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardIcono"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="#EEF2FF"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivProducto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="14dp"
-                android:src="@drawable/ic_product"
-                app:tint="#3B82F6"
-                android:contentDescription="Icono producto" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Contenedor de información del producto -->
-        <LinearLayout
-            android:id="@+id/layoutInfo"
+        <!-- Nombre del producto (fila 1, ancho máximo) -->
+        <TextView
+            android:id="@+id/tvNombreProducto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toEndOf="@id/cardIcono"
-            app:layout_constraintEnd_toStartOf="@id/btnEliminarCard"
-            app:layout_constraintTop_toTopOf="@id/cardIcono">
+            android:text="Producto"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2C1810"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Queso Mantecoso 1kg" />
 
-            <!-- Nombre del producto -->
-            <TextView
-                android:id="@+id/tvNombreProducto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Producto"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#1E293B"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:letterSpacing="0.01"
-                tools:text="Coca Cola 1L" />
+        <!-- Fila 2: Cantidad y Precio Unitario -->
+        <LinearLayout
+            android:id="@+id/layoutCantidadPrecio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start|center_vertical"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNombreProducto">
 
-            <!-- Cantidad con badge -->
-            <LinearLayout
+            <!-- Cantidad -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#F5E6D3">
 
-                <com.google.android.material.card.MaterialCardView
+                <TextView
+                    android:id="@+id/tvCantidad"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="6dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#F1F5F9">
+                    android:text="x1"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#6B4226"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    tools:text="x5" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Separador -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="·"
+                android:textSize="16sp"
+                android:textColor="#E8D5B7"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <!-- Precio Unitario -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E8854D"
+                app:cardBackgroundColor="#FDECD5">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp">
 
                     <TextView
-                        android:id="@+id/tvCantidad"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="x1"
-                        android:textSize="13sp"
+                        android:text="S/."
+                        android:textSize="11sp"
                         android:textStyle="bold"
-                        android:textColor="#64748B"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="4dp"
-                        tools:text="x5" />
+                        android:textColor="#E8854D" />
 
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/tvPrecioUnitario"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="0.00"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#E8854D"
+                        android:gravity="end"
+                        tools:text="10550.00" />
 
-                <!-- Precio unitario -->
-                <TextView
-                    android:id="@+id/tvPrecioUnitario"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="S/. 0.00 c/u"
-                    android:textSize="12sp"
-                    android:textColor="#94A3B8"
-                    tools:text="S/. 3.50 c/u" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" c/u"
+                        android:textSize="10sp"
+                        android:textColor="#A67B5B"
+                        android:layout_marginStart="2dp" />
 
-            </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
-        <!-- Precio total del item -->
+        <!-- Fila 3: Importe + Botón Eliminar -->
         <LinearLayout
+            android:id="@+id/layoutImporteEliminar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toEndOf="@id/cardIcono"
-            app:layout_constraintEnd_toStartOf="@id/btnEliminarCard"
-            app:layout_constraintTop_toBottomOf="@id/layoutInfo"
-            app:layout_constraintBottom_toBottomOf="@id/cardIcono">
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutCantidadPrecio">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Subtotal"
-                android:textSize="11sp"
-                android:textColor="#94A3B8"
-                android:textStyle="bold" />
-
+            <!-- Importe -->
             <TextView
                 android:id="@+id/tvPrecioItem"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:text="S/. 0.00"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#3B82F6"
-                android:layout_marginTop="2dp"
-                tools:text="S/. 17.50" />
+                android:textColor="#E8854D"
+                android:gravity="end"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="10550.00"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Botón Eliminar -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnEliminarCard"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#FFCDD2">
+
+                <ImageView
+                    android:id="@+id/btnEliminar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_delete"
+                    android:padding="10dp"
+                    app:tint="#E53935"
+                    android:contentDescription="Eliminar producto"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-
-        <!-- Botón Eliminar -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnEliminarCard"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="#FEE2E2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <ImageView
-                android:id="@+id/btnEliminar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_delete"
-                android:padding="12dp"
-                app:tint="#EF4444"
-                android:contentDescription="Eliminar producto"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless" />
-
-        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

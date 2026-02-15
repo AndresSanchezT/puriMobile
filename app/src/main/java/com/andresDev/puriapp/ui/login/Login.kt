@@ -1,4 +1,3 @@
-// ui/login/Login.kt
 package com.andresDev.puriapp.ui.login
 
 import android.content.ContentValues.TAG
@@ -10,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.andresDev.puriapp.data.manager.TokenManager
+import com.andresDev.puriapp.data.repository.PedidoRepository
 import com.andresDev.puriapp.databinding.ActivityLoginBinding
 import com.andresDev.puriapp.ui.home.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,25 +21,33 @@ class Login : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+
     @Inject
     lateinit var tokenManager: TokenManager
+
+    //  Inyectar PedidoRepository para limpiar caché
+//    @Inject
+//    lateinit var pedidoRepository: PedidoRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 🔥 LIMPIAR TOKEN EXPIRADO AL INICIAR
+        // 🔥 Limpiar token expirado y caché
         limpiarTokenExpirado()
         observeLoginState()
         setupListeners()
     }
 
     private fun limpiarTokenExpirado() {
-        // Si hay un token guardado, intentar verificar si está expirado
         val token = tokenManager.getToken()
         if (token != null) {
             Log.d(TAG, "Token encontrado, verificando validez...")
+
+//            // 🔥  Limpiar caché de pedidos
+//            pedidoRepository.limpiarCache()
+//            Log.d(TAG, "🗑️ Caché de pedidos limpiado")
 
             // Limpiar sesión para forzar nuevo login
             tokenManager.clearSession()

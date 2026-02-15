@@ -170,10 +170,12 @@ class PedidoAddViewModel @Inject constructor(
 
     // ============ MANEJO DE PRODUCTOS EN PEDIDO ============
 
+    // ✅ CAMBIO: Agregar parámetro precioUnitario
     fun agregarProducto(
         producto: Producto,
         cantidad: Double = 1.0,
-        precioTotal: Double
+        precioTotal: Double,
+        precioUnitario: Double
     ) {
         val productosActuales = _uiState.value.productosEnPedido.toMutableList()
 
@@ -185,15 +187,17 @@ class PedidoAddViewModel @Inject constructor(
             val index = productosActuales.indexOf(productoExistente)
             productosActuales[index] = productoExistente.copy(
                 cantidad = productoExistente.cantidad + cantidad,
-                precioTotal = productoExistente.precioTotal + precioTotal
+                precioTotal = productoExistente.precioTotal + precioTotal,
+                subtotal = productoExistente.subtotal + subtotal
             )
         } else {
-            productosActuales.add(
+            // ✅ CAMBIO: Usar add(0, ...) en lugar de add(...)
+            productosActuales.add(0, // ← Agrega al inicio (índice 0)
                 DetallePedido(
                     producto = producto,
                     cantidad = cantidad,
                     precioTotal = precioTotal,
-                    precioUnitario = precioTotal/cantidad,
+                    precioUnitario = precioUnitario,
                     subtotal = subtotal
                 )
             )
@@ -262,7 +266,7 @@ class PedidoAddViewModel @Inject constructor(
         }
     }
 
-    fun guardarPedido(observacion: String) {
+    fun guardarPedido(observacion: String, tipoFechaSeleccionada: String, forzar: Boolean = false) {
         val state = _uiState.value
 
         // Validaciones
@@ -285,6 +289,33 @@ class PedidoAddViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
 
 
+            if (!forzar) {
+                val verificacion = pedidoRepository.verificarPedidoExistente(
+                    state.clienteSeleccionado.id!!,
+                    tipoFechaSeleccionada
+                )
+
+                verificacion.fold(
+                    onSuccess = { existePedido ->
+                        if (existePedido) {
+                            // Mostrar diálogo de confirmación
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    mostrarDialogoConfirmacion = true
+                                )
+                            }
+                            return@launch
+                        }
+                        // Si no existe, continuar con el guardado normal
+                    },
+                    onFailure = {
+                        // Si falla la verificación, continuar de todas formas
+                    }
+                )
+            }
+
+            // Guardado del pedido (código existente)
             val pedidoRequest = PedidoRequest(
                 subtotal = state.subtotal,
                 igv = state.igv,
@@ -297,7 +328,9 @@ class PedidoAddViewModel @Inject constructor(
             val result = pedidoRepository.registrarPedido(
                 idCliente = state.clienteSeleccionado.id!!,
                 idVendedor = state.idVendedor,
-                pedidoRequest = pedidoRequest
+                pedidoRequest = pedidoRequest,
+                forzar = forzar,
+                tipoFecha = tipoFechaSeleccionada
             )
 
             result.fold(
@@ -319,7 +352,9 @@ class PedidoAddViewModel @Inject constructor(
     }
 
     // ============ UTILIDADES ============
-
+    fun ocultarDialogoConfirmacion() {
+        _uiState.update { it.copy(mostrarDialogoConfirmacion = false) }
+    }
     fun limpiarError() {
         _uiState.update {
             it.copy(error = null)

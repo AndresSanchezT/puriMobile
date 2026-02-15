@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -37,11 +39,16 @@ class PedidoAddFragment : Fragment() {
     private var _binding: FragmentPedidoAddBinding? = null
     private val binding get() = _binding!!
 
+    private var tipoFechaSeleccionada: String = "MANANA"
+
     private val pedidoAddViewModel: PedidoAddViewModel by viewModels()
 
     private lateinit var clienteAdapter: ClienteArrayAdapter
     private lateinit var productoAdapter: ProductoArrayAdapter
     private lateinit var productoPedidoAdapter: ProductoPedidoAdapter
+
+    // ✅ NUEVO: Variable para controlar actualizaciones automáticas
+    private var isUpdatingFields = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,9 +61,8 @@ class PedidoAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ========== AGREGADO: Animación de entrada del título ==========
         animateTitleEntry()
-
+        setupSpinnerFechaEntrega()
         setupClienteAutoComplete()
         setupProductoAutoComplete()
         setupRecyclerView()
@@ -64,7 +70,31 @@ class PedidoAddFragment : Fragment() {
         observeUiState()
     }
 
-    // ========== AGREGADO: Función de animación de título ==========
+    private fun setupSpinnerFechaEntrega() {
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.opciones_fecha_pedidos,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.spinnerFechaEntrega.adapter = adapter
+        binding.spinnerFechaEntrega.setSelection(1)
+
+        binding.spinnerFechaEntrega.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                tipoFechaSeleccionada = when (position) {
+                    0 -> "HOY"
+                    1 -> "MANANA"
+                    2 -> "PASADO_MANANA"
+                    else -> "MANANA"
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
     private fun animateTitleEntry() {
         binding.tvTitulo.apply {
             alpha = 0f
@@ -88,14 +118,19 @@ class PedidoAddFragment : Fragment() {
             pedidoAddViewModel.filtrarClientes(text.toString())
         }
 
-        binding.actvCliente.setOnItemClickListener { parent, _, position, _ ->
+        binding.actvCliente.setOnItemClickListener { _, _, position, _ ->
             val clienteSeleccionado = clienteAdapter.getItem(position)
 
             clienteSeleccionado?.let { cliente ->
                 pedidoAddViewModel.seleccionarCliente(cliente)
                 binding.actvCliente.setText(cliente.nombreContacto, false)
 
-                // ========== MODIFICADO: Snackbar con animación ==========
+                // ✅ Cerrar teclado
+                ocultarTeclado()
+
+                // ✅ Quitar foco del AutoComplete
+                binding.root.clearFocus()
+
                 showSuccessSnackbar("Cliente: ${cliente.nombreContacto}")
             }
         }
@@ -110,19 +145,14 @@ class PedidoAddFragment : Fragment() {
         binding.actvProducto.addTextChangedListener { text ->
             val query = text?.toString().orEmpty()
 
-            // Filtrado
             pedidoAddViewModel.filtrarProductos(query)
 
             if (query.isBlank()) {
-                // 🔽 Modo dropdown
-                binding.tilProducto.setEndIconDrawable(
-                    R.drawable.mtrl_dropdown_arrow
-                )
+                binding.tilProducto.setEndIconDrawable(R.drawable.mtrl_dropdown_arrow)
                 binding.tilProducto.setEndIconOnClickListener {
                     binding.actvProducto.showDropDown()
                 }
             } else {
-                // ❌ Modo limpiar
                 binding.tilProducto.setEndIconDrawable(R.drawable.ic_close)
                 binding.tilProducto.setEndIconOnClickListener {
                     binding.actvProducto.setText("", false)
@@ -132,7 +162,6 @@ class PedidoAddFragment : Fragment() {
             }
         }
 
-        // Estado inicial (MUY importante)
         binding.actvProducto.text?.let {
             binding.actvProducto.setText(it, false)
         }
@@ -145,6 +174,7 @@ class PedidoAddFragment : Fragment() {
                 binding.actvProducto.setText(producto.nombre, false)
                 ocultarTeclado()
                 mostrarControlesCantidad(producto)
+                enfocarBloqueCantidadPrecio()
             }
         }
     }
@@ -161,7 +191,6 @@ class PedidoAddFragment : Fragment() {
             },
             onEliminar = { productoId ->
                 pedidoAddViewModel.eliminarProducto(productoId)
-                // ========== AGREGADO: Snackbar al eliminar ==========
                 showSuccessSnackbar("Producto eliminado")
             },
             onIncrementar = { productoId ->
@@ -176,7 +205,6 @@ class PedidoAddFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = productoPedidoAdapter
             isNestedScrollingEnabled = true
-            // ========== AGREGADO: Configurar animaciones del RecyclerView ==========
             itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator().apply {
                 addDuration = 300
                 removeDuration = 300
@@ -184,68 +212,81 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // Variable de clase para guardar el precio unitario original
-    private var precioUnitarioOriginal: Double = 0.0
-
     private fun setupListeners() {
-        // 🔥 NUEVO: Listener para detectar cuando el usuario escribe en etCantidad
+        // ✅ NUEVO: Listener para cantidad - actualiza subtotal
         binding.etCantidad.addTextChangedListener { editable ->
-            val texto = editable?.toString() ?: ""
+            if (isUpdatingFields) return@addTextChangedListener
 
-            // Solo actualizar si hay un número válido
-            if (texto.isNotBlank()) {
-                actualizarPrecioProductoSeleccionado()
+            val cantidad = editable?.toString()?.toDoubleOrNull() ?: 0.0
+            val precioUnitario = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
+
+            if (cantidad > 0 && precioUnitario > 0) {
+                isUpdatingFields = true
+                val subtotal = cantidad * precioUnitario
+                binding.tvSubtotalProducto.setText(String.format("%.2f", subtotal))
+                isUpdatingFields = false
             }
         }
 
-        // Botón MÁS: Incrementar en 0.5
-        binding.btnMas.setOnClickListener {
-            animateButtonClick(it)
+        // ✅ NUEVO: Listener para precio unitario - actualiza subtotal
+        binding.etPrecio.addTextChangedListener { editable ->
+            if (isUpdatingFields) return@addTextChangedListener
 
-            val cantidadActual = binding.etCantidad.text.toString().toDoubleOrNull() ?: 1.0
-            val nuevaCantidad = cantidadActual + 0.5
+            val precioUnitario = editable?.toString()?.toDoubleOrNull() ?: 0.0
+            val cantidad = binding.etCantidad.text.toString().toDoubleOrNull() ?: 0.0
 
-            binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
-            // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
-            // porque el TextWatcher lo hará automáticamente
+            if (cantidad > 0 && precioUnitario > 0) {
+                isUpdatingFields = true
+                val subtotal = cantidad * precioUnitario
+                binding.tvSubtotalProducto.setText(String.format("%.2f", subtotal))
+                isUpdatingFields = false
+            }
         }
 
-        // Botón MENOS: Decrementar en 0.5 (mínimo 0.5)
+        // ✅ NUEVO: Listener para subtotal - actualiza precio unitario
+        binding.tvSubtotalProducto.addTextChangedListener { editable ->
+            if (isUpdatingFields) return@addTextChangedListener
+
+            val subtotal = editable?.toString()?.toDoubleOrNull() ?: 0.0
+            val cantidad = binding.etCantidad.text.toString().toDoubleOrNull() ?: 0.0
+
+            if (subtotal > 0 && cantidad > 0) {
+                isUpdatingFields = true
+                val precioUnitario = subtotal / cantidad
+                binding.etPrecio.setText(String.format("%.2f", precioUnitario))
+                isUpdatingFields = false
+            }
+        }
+
+        binding.btnMas.setOnClickListener {
+            animateButtonClick(it)
+            val cantidadActual = binding.etCantidad.text.toString().toDoubleOrNull() ?: 1.0
+            val nuevaCantidad = cantidadActual + 0.5
+            binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
+        }
+
         binding.btnMenos.setOnClickListener {
             animateButtonClick(it)
-
             val cantidadActual = binding.etCantidad.text.toString().toDoubleOrNull() ?: 1.0
             if (cantidadActual > 0.5) {
                 val nuevaCantidad = cantidadActual - 0.5
                 binding.etCantidad.setText(String.format("%.1f", nuevaCantidad))
-                // Ya no necesitas llamar actualizarPrecioProductoSeleccionado() aquí
             }
         }
 
-        // Ajustar precio de 0.50 en 0.50
         binding.btnMasPrecio.setOnClickListener {
             animateButtonClick(it)
-            val precioActual = obtenerPrecioDelEditText()
+            val precioActual = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
             val nuevoPrecio = precioActual + 0.50
-
-            precioUnitarioOriginal = nuevoPrecio
             binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
-
-            // Resetear cantidad a 1 cuando cambias el precio manualmente
-            binding.etCantidad.setText("1")
         }
 
         binding.btnMenosPrecio.setOnClickListener {
             animateButtonClick(it)
-            val precioActual = obtenerPrecioDelEditText()
+            val precioActual = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
             if (precioActual >= 0.50) {
                 val nuevoPrecio = precioActual - 0.50
-
-                precioUnitarioOriginal = nuevoPrecio
                 binding.etPrecio.setText(String.format("%.2f", nuevoPrecio))
-
-                // Resetear cantidad a 1 cuando cambias el precio manualmente
-                binding.etCantidad.setText("1")
             }
         }
 
@@ -258,20 +299,9 @@ class PedidoAddFragment : Fragment() {
             animateButtonClick(it)
             showLoading()
             val observacion = binding.etObservacion.text.toString()
-            pedidoAddViewModel.guardarPedido(observacion)
+            pedidoAddViewModel.guardarPedido(observacion, tipoFechaSeleccionada)
         }
 
-        binding.etPrecio.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                val precioEditado = obtenerPrecioDelEditText()
-                if (precioEditado > 0) {
-                    precioUnitarioOriginal = precioEditado
-                    binding.etCantidad.setText("0.5")
-                }
-            }
-        }
-
-        // Validar entrada manual de cantidad
         binding.etCantidad.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 validarYFormatearCantidad()
@@ -279,45 +309,20 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== 3. NUEVA FUNCIÓN: Validar entrada manual ==========
     private fun validarYFormatearCantidad() {
         val texto = binding.etCantidad.text.toString()
         val cantidad = texto.toDoubleOrNull() ?: 1.0
 
-        // Asegurar que sea mínimo 0.5 y múltiplo de 0.5
         val cantidadValida = when {
             cantidad < 0.5 -> 0.5
             else -> {
-                // Redondear al múltiplo de 0.5 más cercano
                 (kotlin.math.round(cantidad * 2) / 2).coerceAtLeast(0.5)
             }
         }
 
         binding.etCantidad.setText(String.format("%.1f", cantidadValida))
-        actualizarPrecioProductoSeleccionado()
     }
 
-    // ========== NUEVA FUNCIÓN: Obtener precio limpio del EditText ==========
-    private fun obtenerPrecioDelEditText(): Double {
-        val texto = binding.etPrecio.text.toString()
-        // Si está vacío, retornar 0
-        if (texto.isBlank()) return 0.0
-
-        // Intentar convertir directamente (si ya es un número sin formato)
-        texto.toDoubleOrNull()?.let { return it }
-
-        // Si tiene formato de moneda, limpiarlo
-        val limpio = texto
-            .replace("S/", "")
-            .replace(".", "")
-            .replace(",", ".")
-            .trim()
-
-        return limpio.toDoubleOrNull() ?: 0.0
-    }
-
-
-    // ========== AGREGADO: Función de animación de botones ==========
     private fun animateButtonClick(view: View) {
         view.animate()
             .scaleX(0.9f)
@@ -338,6 +343,10 @@ class PedidoAddFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pedidoAddViewModel.uiState.collectLatest { state ->
                     updateUI(state)
+
+                    if (state.mostrarDialogoConfirmacion) {
+                        mostrarDialogoConfirmacion()
+                    }
                 }
             }
         }
@@ -346,15 +355,11 @@ class PedidoAddFragment : Fragment() {
     private fun updateUI(state: PedidoAddState) {
         updateClientesList(state.clientesFiltrados)
         updateProductosList(state.productosFiltrados)
-
-        // ========== Actualizar RecyclerView directamente ==========
         updateProductosEnPedido(state.productosEnPedido)
 
-        //Manejar el estado de loading principal
         if (state.isLoading) {
             showLoading()
         } else {
-            // Solo ocultar si no hay loading
             hideLoading()
         }
 
@@ -377,7 +382,26 @@ class PedidoAddFragment : Fragment() {
         animateRecyclerViewVisibility(state.productosEnPedido.isNotEmpty())
     }
 
+    private fun mostrarDialogoConfirmacion() {
+        val clienteNombre = pedidoAddViewModel.uiState.value.clienteSeleccionado?.nombreContacto ?: ""
 
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("⚠️ Pedido Existente")
+            .setMessage("Ya existe un pedido registrado para $clienteNombre en esta fecha.\n\n¿Desea continuar de todas formas?")
+            .setPositiveButton("Continuar") { dialog, _ ->
+                dialog.dismiss()
+                pedidoAddViewModel.ocultarDialogoConfirmacion()
+                val observacion = binding.etObservacion.text.toString()
+                pedidoAddViewModel.guardarPedido(observacion, tipoFechaSeleccionada, forzar = true)
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+                pedidoAddViewModel.ocultarDialogoConfirmacion()
+            }
+             // Si tienes un drawable personalizado
+            .setCancelable(false)
+            .show()
+    }
     private fun updateClientesList(clientes: List<Cliente>) {
         clienteAdapter.actualizarClientes(clientes)
     }
@@ -387,11 +411,9 @@ class PedidoAddFragment : Fragment() {
     }
 
     private fun updateProductosEnPedido(productos: List<DetallePedido>) {
-        // Crear una NUEVA lista para forzar que DiffUtil detecte cambios
         productoPedidoAdapter.submitList(productos.toList()) {
-            // Callback opcional: scroll al último item cuando se agrega uno nuevo
             if (productos.isNotEmpty()) {
-                binding.rvProductosAgregados.smoothScrollToPosition(productos.size - 1)
+                binding.rvProductosAgregados.smoothScrollToPosition(0)
             }
         }
     }
@@ -412,14 +434,12 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== Actualizar totales con animación ==========
     private fun animateTotalesUpdate(state: PedidoAddState) {
         animateTextChange(binding.tvSubtotal, formatearPrecio(state.subtotal))
         animateTextChange(binding.tvIgv, formatearPrecio(state.igv))
         animateTextChange(binding.tvTotal, formatearPrecio(state.total))
     }
 
-    // ========== Función para animar cambios de texto ==========
     private fun animateTextChange(textView: android.widget.TextView, newText: String) {
         if (textView.text != newText) {
             textView.animate()
@@ -438,7 +458,6 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== Función para animar visibilidad del RecyclerView ==========
     private fun animateRecyclerViewVisibility(show: Boolean) {
         if (show && binding.rvProductosAgregados.visibility != View.VISIBLE) {
             binding.rvProductosAgregados.apply {
@@ -463,7 +482,6 @@ class PedidoAddFragment : Fragment() {
         }
     }
 
-    // ========== 4. ACTUALIZAR mostrarControlesCantidad() ==========
     private fun mostrarControlesCantidad(producto: Producto) {
         binding.layoutCantidadPrecio.apply {
             visibility = View.VISIBLE
@@ -487,11 +505,44 @@ class PedidoAddFragment : Fragment() {
                 .start()
         }
 
-        // 🔥 CAMBIO: Iniciar en 0.5 en lugar de 1
-        binding.etCantidad.setText("0.5")
+        // ✅ MODIFICADO: Inicializar valores y calcular subtotal
+        isUpdatingFields = true
+        binding.etCantidad.setText("1")
         binding.etPrecio.setText(String.format("%.2f", producto.precio))
 
-        precioUnitarioOriginal = producto.precio
+        val subtotalInicial = 1 * producto.precio
+        binding.tvSubtotalProducto.setText(String.format("%.2f", subtotalInicial))
+        isUpdatingFields = false
+    }
+
+    private fun enfocarBloqueCantidadPrecio() {
+        binding.scrollRoot.post {
+            // Scroll hasta el layout de cantidad/precio
+            binding.scrollRoot.smoothScrollTo(
+                0,
+                binding.layoutCantidadPrecio.top
+            )
+
+            // Quitar foco de cualquier EditText
+            binding.root.clearFocus()
+
+            // (Opcional) hacer el bloque "focusable" visualmente
+            binding.layoutCantidadPrecio.isFocusable = true
+            binding.layoutCantidadPrecio.isFocusableInTouchMode = true
+            binding.layoutCantidadPrecio.requestFocus()
+
+            // Pequeña animación para guiar la vista
+            binding.layoutCantidadPrecio.animate()
+                .alpha(0.95f)
+                .setDuration(120)
+                .withEndAction {
+                    binding.layoutCantidadPrecio.animate()
+                        .alpha(1f)
+                        .setDuration(120)
+                        .start()
+                }
+                .start()
+        }
     }
 
     private fun ocultarControlesCantidad() {
@@ -514,65 +565,62 @@ class PedidoAddFragment : Fragment() {
             .start()
     }
 
-
-    // Función simplificada que usa el precio unitario guardado
-    private fun actualizarPrecioProductoSeleccionado() {
-        val cantidad = binding.etCantidad.text.toString().toDoubleOrNull() ?: 0.5
-
-        // Multiplicar el precio unitario original por la cantidad
-        val precioTotal = precioUnitarioOriginal * cantidad
-        binding.etPrecio.setText(String.format("%.2f", precioTotal))
-    }
-
     private fun agregarProductoAlPedido() {
         val producto = pedidoAddViewModel.uiState.value.productoSeleccionado
-        val cantidadTexto = binding.etCantidad.text.toString()
-        val cantidad = cantidadTexto.toDoubleOrNull() ?: 1.0
-        val precioTotal = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
+        val cantidad = binding.etCantidad.text.toString().toDoubleOrNull() ?: 0.0
+        val precioUnitario = binding.etPrecio.text.toString().toDoubleOrNull() ?: 0.0
+        val subtotal = binding.tvSubtotalProducto.text.toString().toDoubleOrNull() ?: 0.0
 
-        // Validar cantidad mínima
+        // ✅ Validaciones
         if (cantidad < 0.5) {
             showError("La cantidad mínima es 0.5")
             return
         }
 
-        if (producto != null && cantidad > 0) {
-            pedidoAddViewModel.agregarProducto(producto, cantidad, precioTotal)
+        if (precioUnitario <= 0) {
+            showError("El precio unitario debe ser mayor a 0")
+            return
+        }
+
+        if (subtotal <= 0) {
+            showError("El subtotal debe ser mayor a 0")
+            return
+        }
+
+        if (producto != null) {
+            pedidoAddViewModel.agregarProducto(
+                producto = producto,
+                cantidad = cantidad,
+                precioTotal = subtotal,  // ✅ Usar el subtotal calculado
+                precioUnitario = precioUnitario
+            )
 
             binding.actvProducto.setText("")
-            binding.etCantidad.setText("1")
             ocultarControlesCantidad()
-
             showSuccessSnackbar("Producto agregado")
         }
     }
-
-    // ========== Función para mostrar loading ==========
 
     private fun showLoading() {
         binding.progressBar.visibility = View.VISIBLE
         binding.loadingOverlay.visibility = View.VISIBLE
         binding.btnGuardarPedido.isEnabled = false
     }
+
     private fun hideLoading() {
         binding.progressBar.visibility = View.GONE
         binding.loadingOverlay.visibility = View.GONE
         binding.btnGuardarPedido.isEnabled = true
     }
 
-    // ==========  Función para animación de éxito ==========
     private fun showSuccessAnimation() {
         showSuccessSnackbar("¡Pedido registrado exitosamente!")
-
-        // Marcar que se guardó un pedido
         findNavController().previousBackStackEntry?.savedStateHandle?.set("pedido_guardado", true)
-
         view?.postDelayed({
             findNavController().navigateUp()
         }, 1500)
     }
 
-    // ==========  Snackbar con estilo personalizado ==========
     private fun showSuccessSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
@@ -589,7 +637,6 @@ class PedidoAddFragment : Fragment() {
             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
             .show()
 
-        // ==========  Efecto shake en error ==========
         binding.root.animate()
             .translationX(-10f)
             .setDuration(50)
@@ -612,7 +659,6 @@ class PedidoAddFragment : Fragment() {
         val formato = NumberFormat.getCurrencyInstance(Locale("es", "PE"))
         return formato.format(precio)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

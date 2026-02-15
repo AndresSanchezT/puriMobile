@@ -1,25 +1,42 @@
 package com.andresDev.puriapp.ui.pedidos.adapter
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Filter
-import android.widget.TextView
 import com.andresDev.puriapp.data.model.Cliente
+import com.andresDev.puriapp.databinding.ItemClienteDropdownBinding
 
 class ClienteArrayAdapter(
     context: Context
-) : ArrayAdapter<Cliente>(context, android.R.layout.simple_dropdown_item_1line) {
-
+) : ArrayAdapter<Cliente>(context, 0) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = super.getView(position, convertView, parent)
+        val binding: ItemClienteDropdownBinding
+        val view: View
+
+        if (convertView == null) {
+            binding = ItemClienteDropdownBinding.inflate(
+                LayoutInflater.from(context),
+                parent,
+                false
+            )
+            view = binding.root
+            view.tag = binding
+        } else {
+            view = convertView
+            binding = view.tag as ItemClienteDropdownBinding
+        }
+
         val cliente = getItem(position)
 
-        if (view is TextView && cliente != null) {
-            view.text = cliente.nombreContacto
+        if (cliente != null) {
+            binding.tvNombreContacto.text = cliente.nombreContacto
+            binding.tvDireccion.text = cliente.direccion
         }
+
         return view
     }
 
@@ -36,8 +53,8 @@ class ClienteArrayAdapter(
     }
 
     fun actualizarClientes(nuevosClientes: List<Cliente>) {
-        clear()  // Limpia la lista interna del ArrayAdapter
-        addAll(nuevosClientes)  // Agrega a la lista interna del ArrayAdapter
+        clear()
+        addAll(nuevosClientes)
         notifyDataSetChanged()
     }
 }

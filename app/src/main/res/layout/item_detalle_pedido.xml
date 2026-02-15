@@ -138,7 +138,7 @@
             android:paddingHorizontal="20dp"
             android:paddingVertical="4dp"
             android:orientation="horizontal"
-            android:background="@drawable/bg_subtotal_item"
+            android:background="#3B82F6"
             app:layout_constraintTop_toBottomOf="@id/layoutInputs"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -146,16 +146,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Subtotal:"
+                android:text="Importe:"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#475569" />
+                android:textColor="#FFFFFF" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilSubtotal"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="#F0FDF4"
+                app:boxBackgroundColor="#3B82F6"
                 app:boxBackgroundMode="filled"
                 app:prefixText="S/ ">
 
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
                     android:textSize="16sp"
-                    android:textColor="#10B981"
+                    android:textColor="#FFFFFF"
                     tools:text="255.00" />
 
             </com.google.android.material.textfield.TextInputLayout>

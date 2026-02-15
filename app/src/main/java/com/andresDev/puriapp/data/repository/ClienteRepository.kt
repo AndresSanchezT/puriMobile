@@ -71,8 +71,10 @@ class ClienteRepository @Inject constructor(
         val queryNormalizado = query.lowercase().trim()
 
         return cacheNormalizado
-            .filter { (_, nombreNormalizado) ->
-                nombreNormalizado.contains(queryNormalizado)
+            .filter { (cliente, nombreNormalizado) ->
+                val direccionNormalizada = cliente.direccion.lowercase()
+                nombreNormalizado.contains(queryNormalizado) ||
+                        direccionNormalizada.contains(queryNormalizado)
             }
             .map { (cliente, _) -> cliente }
     }

@@ -142,10 +142,10 @@ class ClienteAddFragment : Fragment() {
             return
         }
 
-        if (telefono.isEmpty()) {
-            binding.etTelefono.error = "Campo requerido"
-            return
-        }
+//        if (telefono.isEmpty()) {
+//            binding.etTelefono.error = "Campo requerido"
+//            return
+//        }
 
         if (telefono.length < 9) {
             binding.etTelefono.error = "Teléfono inválido"

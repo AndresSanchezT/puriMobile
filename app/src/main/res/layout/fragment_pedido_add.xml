@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#FFF8F0"
     tools:context=".ui.pedidos.PedidoAddFragment">
 
     <!-- ProgressBar Circular (para loading) -->
@@ -31,8 +31,8 @@
         android:focusable="true"
         tools:visibility="visible" />
 
-    <!-- ========== CAMBIADO: ScrollView → NestedScrollView ========== -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -51,7 +51,7 @@
                 android:text="Nuevo Pedido"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#1E293B"
+                android:textColor="#2C1810"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,11 +78,10 @@
                         android:layout_height="wrap_content"
                         android:text="Cliente"
                         android:textSize="14sp"
-                        android:textColor="#64748B"
+                        android:textColor="#6B5444"
                         android:textStyle="bold"
                         android:letterSpacing="0.05" />
 
-                    <!-- AutoCompleteTextView para buscar clientes -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilCliente"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -94,10 +93,10 @@
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:hintTextColor="#64748B"
+                        app:boxStrokeColor="#E8D5B7"
+                        app:hintTextColor="#A89080"
                         app:startIconDrawable="@drawable/ic_person"
-                        app:startIconTint="#64748B">
+                        app:startIconTint="#A67B5B">
 
                         <AutoCompleteTextView
                             android:id="@+id/actvCliente"
@@ -106,9 +105,75 @@
                             android:inputType="text"
                             android:completionThreshold="1"
                             android:textSize="16sp"
-                            android:textColor="#1E293B" />
+                            android:textColor="#2C1810" />
 
                     </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card de Fecha de Entrega -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFechaEntrega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha de Entrega"
+                        android:textSize="14sp"
+                        android:textColor="#6B5444"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_edittext"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_calendar"
+                            android:contentDescription="Calendario"
+                            android:layout_marginEnd="12dp"
+                            app:tint="#A67B5B" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pedido para:"
+                            android:textColor="#6B5444"
+                            android:textSize="14sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerFechaEntrega"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:spinnerMode="dropdown"
+                            android:minHeight="48dp"
+                            android:background="@android:color/transparent"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -137,11 +202,11 @@
                         android:layout_height="wrap_content"
                         android:text="Productos"
                         android:textSize="14sp"
-                        android:textColor="#64748B"
+                        android:textColor="#6B5444"
                         android:textStyle="bold"
                         android:letterSpacing="0.05" />
 
-                    <!-- AutoCompleteTextView para buscar productos -->
+                    <!-- AutoCompleteTextView buscar productos (naranja) -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilProducto"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -149,227 +214,309 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:hint="Buscar producto"
+                        android:textColorHint="#FFFFFF"
                         app:boxCornerRadiusBottomEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:hintTextColor="#64748B"
+                        app:boxBackgroundColor="#E8854D"
+                        app:boxStrokeColor="#FFFFFF"
+                        app:boxStrokeWidth="2dp"
+                        app:hintTextColor="#FFFFFF"
+                        app:hintTextAppearance="@style/HintTextWhite"
                         app:startIconDrawable="@drawable/ic_search"
-                        app:startIconTint="#64748B">
+                        app:startIconTint="#FFFFFF"
+                        app:endIconTint="#FFFFFF">
 
                         <AutoCompleteTextView
                             android:id="@+id/actvProducto"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
                             android:completionThreshold="1"
+                            android:inputType="text"
+                            android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textColor="#1E293B" />
+                            android:textColorHint="#F5E6D3" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Control de cantidad y precio -->
+                    <!-- Control de cantidad, precio y subtotal -->
                     <LinearLayout
                         android:id="@+id/layoutCantidadPrecio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
+                        android:orientation="vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
 
-                        <!-- Sección de Cantidad (MÁS ANCHA) -->
+                        <!-- Primera fila: Cantidad y Precio Unitario -->
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.4"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="12dp">
+                            android:orientation="horizontal"
+                            android:baselineAligned="false">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cantidad"
-                                android:textSize="13sp"
-                                android:textColor="#64748B"
-                                android:textStyle="bold" />
-
+                            <!-- Sección de Cantidad (weight 3 = 60%) -->
                             <LinearLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="8dp">
+                                android:layout_weight="3"
+                                android:orientation="vertical"
+                                android:layout_marginEnd="8dp">
 
-                                <!-- Botón Menos -->
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/btnMenos"
-                                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:insetTop="0dp"
-                                    android:insetBottom="0dp"
-                                    app:icon="@drawable/ic_remove"
-                                    app:iconGravity="textStart"
-                                    app:iconPadding="0dp"
-                                    app:cornerRadius="12dp"
-                                    app:backgroundTint="#F1F5F9"
-                                    app:iconTint="#64748B" />
-
-                                <!-- FrameLayout con EditText Cantidad -->
-                                <FrameLayout
-                                    android:layout_width="0dp"
+                                <TextView
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:minHeight="56dp"
-                                    android:layout_weight="1"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_marginEnd="8dp"
+                                    android:text="Cantidad"
+                                    android:textSize="13sp"
+                                    android:textColor="#6B5444"
+                                    android:textStyle="bold" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginTop="8dp">
+
+                                    <!-- Botón Menos -->
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMenos"
+                                        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        app:icon="@drawable/ic_remove"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="0dp"
+                                        app:iconSize="18dp"
+                                        app:cornerRadius="10dp"
+                                        app:backgroundTint="#F5E6D3"
+                                        app:iconTint="#A67B5B" />
+
+                                    <!-- EditText Cantidad -->
+                                    <FrameLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:layout_marginStart="4dp"
+                                        android:layout_marginEnd="4dp"
+                                        android:background="@drawable/cantidad_input_background">
+
+                                        <EditText
+                                            android:id="@+id/etCantidad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="48dp"
+                                            android:background="@android:color/transparent"
+                                            android:gravity="center"
+                                            android:inputType="numberDecimal"
+                                            android:text="1.0"
+                                            android:textAlignment="center"
+                                            android:textColor="#2C1810"
+                                            android:textSize="20sp"
+                                            android:textStyle="bold"
+                                            android:paddingStart="2dp"
+                                            android:paddingEnd="2dp"
+                                            android:maxLength="6"
+                                            android:lines="1"
+                                            android:maxLines="1"
+                                            android:hint="1.0"
+                                            android:letterSpacing="0.02" />
+
+                                    </FrameLayout>
+
+                                    <!-- Botón Más -->
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnMas"
+                                        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        app:icon="@drawable/ic_add"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="0dp"
+                                        app:iconSize="18dp"
+                                        app:cornerRadius="10dp"
+                                        app:backgroundTint="#F5E6D3"
+                                        app:iconTint="#A67B5B" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- Sección de Precio Unitario (weight 2 = 40%) -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:orientation="vertical"
+                                android:layout_marginStart="8dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Precio Unit."
+                                    android:textSize="13sp"
+                                    android:textColor="#6B5444"
+                                    android:textStyle="bold" />
+
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
                                     android:background="@drawable/cantidad_input_background">
 
                                     <EditText
-                                        android:id="@+id/etCantidad"
+                                        android:id="@+id/etPrecio"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:minHeight="56dp"
+                                        android:layout_height="48dp"
                                         android:background="@android:color/transparent"
                                         android:gravity="center"
                                         android:inputType="numberDecimal"
-                                        android:text="1"
+                                        android:text="0.00"
                                         android:textAlignment="center"
-                                        android:textColor="#1E293B"
-                                        android:textSize="24sp"
+                                        android:textColor="#E8854D"
+                                        android:textSize="15sp"
                                         android:textStyle="bold"
-                                        android:paddingStart="0dp"
-                                        android:paddingEnd="2dp"
-                                        android:paddingTop="12dp"
-                                        android:paddingBottom="12dp"
-                                        android:maxLength="6"
+                                        android:paddingStart="4dp"
+                                        android:paddingEnd="4dp"
+                                        android:maxLength="8"
                                         android:lines="1"
                                         android:maxLines="1"
-                                        android:hint="1"
-                                        android:letterSpacing="0.03" />
+                                        android:hint="0.00" />
 
                                 </FrameLayout>
-
-                                <!-- Botón Más -->
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/btnMas"
-                                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                                    android:layout_width="48dp"
-                                    android:layout_height="48dp"
-                                    android:insetTop="0dp"
-                                    android:insetBottom="0dp"
-                                    app:icon="@drawable/ic_add"
-                                    app:iconGravity="textStart"
-                                    app:iconPadding="0dp"
-                                    app:cornerRadius="12dp"
-                                    app:backgroundTint="#F1F5F9"
-                                    app:iconTint="#64748B" />
 
                             </LinearLayout>
 
                         </LinearLayout>
 
-                        <!-- Sección de Precio (MÁS ESTRECHA) -->
+                        <!-- Botones de ajuste de precio (+0.50 / -0.50) -->
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            android:layout_marginTop="8dp">
+
+                            <!-- Botón Menos Precio (-0.50) -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnMenosPrecio"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:minWidth="60dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="-0.5"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:cornerRadius="10dp"
+                                app:backgroundTint="#FFCDD2"
+                                android:textColor="#E53935" />
+
+                            <!-- Botón Más Precio (+0.50) -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnMasPrecio"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:minWidth="60dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:text="+0.5"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:cornerRadius="10dp"
+                                app:backgroundTint="#FDECD5"
+                                android:textColor="#E8854D" />
+
+                        </LinearLayout>
+
+                        <!-- Segunda fila - Subtotal / Importe -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_marginStart="12dp">
+                            android:layout_marginTop="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Precio"
+                                android:text="Importe"
                                 android:textSize="13sp"
-                                android:textColor="#64748B"
+                                android:textColor="#6B5444"
                                 android:textStyle="bold" />
 
-                            <!-- FrameLayout con EditText para el precio -->
-                            <FrameLayout
+                            <!-- Card subtotal -->
+                            <com.google.android.material.card.MaterialCardView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:minHeight="56dp"
                                 android:layout_marginTop="8dp"
-                                android:background="@drawable/cantidad_input_background">
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp"
+                                app:cardBackgroundColor="#FDECD5">
 
-                                <EditText
-                                    android:id="@+id/etPrecio"
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:minHeight="56dp"
-                                    android:background="@android:color/transparent"
-                                    android:gravity="end|center_vertical"
-                                    android:inputType="numberDecimal"
-                                    android:text="0.00"
-                                    android:textAlignment="textEnd"
-                                    android:textColor="#3B82F6"
-                                    android:textSize="19sp"
-                                    android:textStyle="bold"
-                                    android:paddingStart="12dp"
-                                    android:paddingEnd="12dp"
-                                    android:paddingTop="12dp"
-                                    android:paddingBottom="12dp"
-                                    android:maxLength="10"
-                                    android:lines="1"
-                                    android:maxLines="1"
-                                    android:hint="0.00" />
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:padding="14dp">
 
-                            </FrameLayout>
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Total a agregar:"
+                                        android:textSize="14sp"
+                                        android:textColor="#6B4226"
+                                        android:textStyle="bold" />
 
-                            <!-- Botones de ajuste de precio (+0.50 / -0.50) -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="end"
-                                android:layout_marginTop="8dp">
+                                    <FrameLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:minWidth="100dp">
 
-                                <!-- Botón Menos Precio (-0.50) -->
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/btnMenosPrecio"
-                                    style="@style/Widget.Material3.Button.TonalButton"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="40dp"
-                                    android:minWidth="52dp"
-                                    android:insetTop="0dp"
-                                    android:insetBottom="0dp"
-                                    android:insetLeft="0dp"
-                                    android:insetRight="0dp"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                                    android:layout_marginEnd="6dp"
-                                    android:text="-0.5"
-                                    android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    app:cornerRadius="10dp"
-                                    app:backgroundTint="#FEE2E2"
-                                    android:textColor="#EF4444" />
+                                        <EditText
+                                            android:id="@+id/tvSubtotalProducto"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:minWidth="100dp"
+                                            android:background="@android:color/transparent"
+                                            android:gravity="end|center_vertical"
+                                            android:inputType="numberDecimal"
+                                            android:text="0.00"
+                                            android:textAlignment="textEnd"
+                                            android:textSize="20sp"
+                                            android:textStyle="bold"
+                                            android:textColor="#6B4226"
+                                            android:paddingStart="8dp"
+                                            android:paddingEnd="0dp"
+                                            android:maxLength="10"
+                                            android:lines="1"
+                                            android:maxLines="1"
+                                            android:hint="0.00"
+                                            android:selectAllOnFocus="true" />
 
-                                <!-- Botón Más Precio (+0.50) -->
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/btnMasPrecio"
-                                    style="@style/Widget.Material3.Button.TonalButton"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="40dp"
-                                    android:minWidth="52dp"
-                                    android:insetTop="0dp"
-                                    android:insetBottom="0dp"
-                                    android:insetLeft="0dp"
-                                    android:insetRight="0dp"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
-                                    android:text="+0.5"
-                                    android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    app:cornerRadius="10dp"
-                                    app:backgroundTint="#DBEAFE"
-                                    android:textColor="#3B82F6" />
+                                    </FrameLayout>
 
-                            </LinearLayout>
+                                </LinearLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
 
                         </LinearLayout>
 
@@ -387,16 +534,16 @@
                         android:visibility="gone"
                         app:icon="@drawable/ic_add"
                         app:cornerRadius="12dp"
-                        app:backgroundTint="#EEF2FF"
-                        app:iconTint="#3B82F6"
-                        android:textColor="#3B82F6"
+                        app:backgroundTint="#FDECD5"
+                        app:iconTint="#E8854D"
+                        android:textColor="#E8854D"
                         tools:visibility="visible" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ========== CORREGIDO: RecyclerView con nestedScrolling habilitado ========== -->
+            <!-- RecyclerView productos agregados -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvProductosAgregados"
                 android:layout_width="match_parent"
@@ -414,12 +561,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:hint="Observación del pedido"
-                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeColor="#E8D5B7"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:hintTextColor="#64748B">
+                app:hintTextColor="#A89080">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etObservacion"
@@ -429,12 +576,12 @@
                     android:gravity="top|start"
                     android:inputType="textMultiLine"
                     android:maxLines="4"
-                    android:textColor="#1E293B"
+                    android:textColor="#2C1810"
                     android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Card de Resumen -->
+            <!-- Card de Resumen (naranja principal) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardResumen"
                 android:layout_width="match_parent"
@@ -443,7 +590,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp"
-                app:cardBackgroundColor="#3B82F6"
+                app:cardBackgroundColor="#E8854D"
                 app:layout_constraintTop_toBottomOf="@id/rvProductosAgregados">
 
                 <LinearLayout
@@ -460,6 +607,7 @@
                         android:textStyle="bold"
                         android:textColor="#FFFFFF" />
 
+                    <!-- Subtotal -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -472,7 +620,7 @@
                             android:layout_weight="1"
                             android:text="Subtotal:"
                             android:textSize="15sp"
-                            android:textColor="#E0E7FF" />
+                            android:textColor="#F5E6D3" />
 
                         <TextView
                             android:id="@+id/tvSubtotal"
@@ -485,6 +633,7 @@
 
                     </LinearLayout>
 
+                    <!-- IGV -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -497,7 +646,7 @@
                             android:layout_weight="1"
                             android:text="IGV (18%):"
                             android:textSize="15sp"
-                            android:textColor="#E0E7FF" />
+                            android:textColor="#F5E6D3" />
 
                         <TextView
                             android:id="@+id/tvIgv"
@@ -516,8 +665,9 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"
-                        android:background="#60A5F4" />
+                        android:background="#D4A574" />
 
+                    <!-- Total -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -547,7 +697,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Botón Guardar Pedido -->
+            <!-- Botón Guardar Pedido (verde olivo) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardarPedido"
                 android:layout_width="match_parent"
@@ -557,9 +707,11 @@
                 android:text="Guardar Pedido"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="#FFFFFF"
                 app:icon="@drawable/ic_check"
+                app:iconTint="#FFFFFF"
                 app:cornerRadius="16dp"
-                app:backgroundTint="#10B981"
+                app:backgroundTint="#6B8E5A"
                 app:layout_constraintTop_toBottomOf="@id/cardResumen"
                 app:layout_constraintBottom_toBottomOf="parent" />
 

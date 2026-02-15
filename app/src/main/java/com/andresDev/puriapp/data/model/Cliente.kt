@@ -7,7 +7,7 @@ data class Cliente(
     val direccion: String,
     val referencia: String?,
     val estado: String,
-    val telefono: String,
+    val telefono: String?,
     val fechaRegistro: String?,
     val fechaActualizacion: String?,
     val latitud: Double?,

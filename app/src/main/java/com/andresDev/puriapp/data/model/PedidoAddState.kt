@@ -1,6 +1,8 @@
 package com.andresDev.puriapp.data.model
 
 data class PedidoAddState(
+
+    val mostrarDialogoConfirmacion: Boolean = false,
     //Metodos pago
     val yape: Double = 0.0,
     val plin: Double = 0.0,
@@ -38,6 +40,7 @@ data class PedidoAddState(
     val subtotal: Double = 0.0,
     val total: Double = 0.0,
     val igv: Double= 0.0
+
 )
 
 

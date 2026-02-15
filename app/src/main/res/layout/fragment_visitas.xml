@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Lista de Visitas"
+        android:text="LISTA DE VISITAS"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:textSize="24sp"

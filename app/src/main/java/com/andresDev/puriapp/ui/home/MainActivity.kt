@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.andresDev.puriapp.R
 import com.andresDev.puriapp.data.manager.TokenManager
+import com.andresDev.puriapp.data.repository.PedidoRepository
 import com.andresDev.puriapp.databinding.ActivityMainBinding
 import com.andresDev.puriapp.ui.login.Login
 import com.andresDev.puriapp.ui.pedidos.PedidoViewModel
@@ -29,6 +30,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var tokenManager: TokenManager
+
+    @Inject
+    lateinit var pedidoRepository: PedidoRepository
 
     private val pedidoViewModel: PedidoViewModel by viewModels()
 
@@ -56,13 +60,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun initUI() {
         initNavigation()
+        setupBottomNavigationMenu()
         setupUserIcon()
+    }
+
+    private fun setupBottomNavigationMenu() {
+        val userRole = tokenManager.getUserRole()
+
+        val menuRes = if (userRole?.equals("administrador", ignoreCase = true) == true) {
+            R.menu.bottom_nav_menu_admin
+        } else {
+            R.menu.bottom_menu
+        }
+
+        binding.bottonNavView.menu.clear()
+        binding.bottonNavView.inflateMenu(menuRes)
+        binding.bottonNavView.setupWithNavController(navController)
+
+        Log.d("MainActivity", "Menú cargado para rol: $userRole")
     }
 
     private fun initNavigation() {
         val navHost = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHost.navController
-        binding.bottonNavView.setupWithNavController(navController)
     }
 
     private fun setupUserIcon() {
@@ -77,31 +97,25 @@ class MainActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_user_menu)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        // Obtener datos del usuario
         val userName = tokenManager.getUserName() ?: "Usuario"
         val userRole = tokenManager.getUserRole() ?: "Sin rol"
 
-        // Referencias a las vistas del diálogo
         val tvUserName = dialog.findViewById<TextView>(R.id.tvUserName)
         val tvUserRole = dialog.findViewById<TextView>(R.id.tvUserRole)
         val tvCantidadEfectivo = dialog.findViewById<TextView>(R.id.tvCantidadEfectivo)
         val btnCerrarSesion = dialog.findViewById<MaterialButton>(R.id.btnCerrarSesion)
 
-        // Configurar datos
         tvUserName.text = userName
         tvUserRole.text = userRole
 
-        // 🔥 Observar el efectivo del día desde el ViewModel
         lifecycleScope.launch {
             pedidoViewModel.efectivoDelDia.collect { efectivo ->
                 tvCantidadEfectivo.text = "S/. %.2f".format(efectivo)
             }
         }
 
-        // 🔥 Opcional: Actualizar al abrir el diálogo
         pedidoViewModel.actualizarEfectivoDelDia()
 
-        // Botón de cerrar sesión
         btnCerrarSesion.setOnClickListener {
             dialog.dismiss()
             cerrarSesion()
@@ -111,6 +125,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun cerrarSesion() {
+        // Limpiar caché de pedidos antes de cerrar sesión
+        pedidoRepository.limpiarCache()
+        Log.d("MainActivity", "🗑️ Caché de pedidos limpiado")
+
         // Limpiar sesión
         tokenManager.clearSession()
 
