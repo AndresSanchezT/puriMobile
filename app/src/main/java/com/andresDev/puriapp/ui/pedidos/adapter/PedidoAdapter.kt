@@ -1,9 +1,9 @@
-// PedidoAdapter.kt
 package com.andresDev.puriapp.ui.pedidos.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.andresDev.puriapp.data.model.PedidoListaReponse
 import com.andresDev.puriapp.databinding.ItemPedidoBinding
 import java.util.Collections
@@ -14,73 +14,96 @@ class PedidoAdapter(
     private val onInfoClick: (Long) -> Unit,
     private val onDeleteClick: (PedidoListaReponse) -> Unit,
     private val onOrderChanged: () -> Unit
-) : RecyclerView.Adapter<PedidoViewHolder>() {
+) : ListAdapter<PedidoListaReponse, PedidoViewHolder>(DIFF_CALLBACK) {
 
-    private var pedidosList = mutableListOf<PedidoListaReponse>()
-    private var hayChangesPendientes = false
-
-    private var isNumericEditMode = false
-    private val orderNumbers = mutableMapOf<Long, Int>()
-
-    fun submitList(list: List<PedidoListaReponse>?) {
-        val sortedList = list?.sortedBy { it.orden ?: Int.MAX_VALUE } ?: emptyList()
-
-        if (!hayChangesPendientes) {
-            pedidosList.clear()
-            pedidosList.addAll(sortedList)
-            notifyDataSetChanged()
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PedidoListaReponse>() {
+            override fun areItemsTheSame(old: PedidoListaReponse, new: PedidoListaReponse) =
+                old.id == new.id
+            override fun areContentsTheSame(old: PedidoListaReponse, new: PedidoListaReponse) =
+                old == new
         }
+    }
+
+    // Lista mutable interna para drag & drop y filtrado en modo edición
+    private val pedidosList = mutableListOf<PedidoListaReponse>()
+    private var cachedPedidosSnapshot = listOf<PedidoListaReponse>()
+
+    private var hayChangesPendientes = false
+    private var isNumericEditMode = false
+    val orderNumbers = mutableMapOf<Long, Int>()
+
+    override fun submitList(list: List<PedidoListaReponse>?) {
+        if (hayChangesPendientes) return // No pisar cambios pendientes
+
+        val sorted = list?.sortedBy { it.orden ?: Int.MAX_VALUE } ?: emptyList()
+        pedidosList.clear()
+        pedidosList.addAll(sorted)
+        super.submitList(sorted)
+    }
+
+    fun cacheCurrentPedidos() {
+        cachedPedidosSnapshot = pedidosList.toList()
+    }
+
+    fun filterByName(query: String) {
+        if (!isNumericEditMode) return
+
+        val filtered = if (query.isBlank()) {
+            cachedPedidosSnapshot.toList()
+        } else {
+            cachedPedidosSnapshot.filter { pedido ->
+                pedido.nombreCliente?.contains(query, ignoreCase = true) == true ||
+                        pedido.direccion?.contains(query, ignoreCase = true) == true
+            }
+        }
+
+        pedidosList.clear()
+        pedidosList.addAll(filtered)
+
+        // submitList de ListAdapter usa DiffUtil internamente → no destruye ViewHolders innecesariamente
+        super.submitList(filtered.toList())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PedidoViewHolder {
         val binding = ItemPedidoBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return PedidoViewHolder(
-            binding,
-            isAdminMode,
-            onCheckClick,
-            onInfoClick,
-            onDeleteClick,
-            { pedidoId, numero ->
-                orderNumbers[pedidoId] = numero
-                hayChangesPendientes = true
-                onOrderChanged()
-            }
-        )
+            binding, isAdminMode,
+            onCheckClick, onInfoClick, onDeleteClick
+        ) { pedidoId, numero ->
+            orderNumbers[pedidoId] = numero
+            hayChangesPendientes = true
+            onOrderChanged()
+        }
     }
 
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
-        val pedido = pedidosList[position]
-
-        // ✅ IMPORTANTE: Pasar el número actual para evitar re-bind
+        val pedido = getItem(position)
         val currentNumber = pedido.id?.let { orderNumbers[it] }
         holder.bind(pedido, position + 1, isNumericEditMode, currentNumber)
     }
 
-    // ✅ NUEVO: Sobrescribir para evitar rebind completo en payloads
-    override fun onBindViewHolder(holder: PedidoViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads)
-        } else {
-            // Si hay payloads, solo actualizar lo necesario (no tocar EditText)
-            // No hacer nada, mantener el estado del EditText
+    override fun onBindViewHolder(
+        holder: PedidoViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty()) {
+            // Evitar rebind si hay payloads (preserva foco del EditText)
+            return
         }
+        super.onBindViewHolder(holder, position, payloads)
     }
-
-    override fun getItemCount(): Int = pedidosList.size
 
     fun onItemMove(fromPosition: Int, toPosition: Int) {
         if (fromPosition < toPosition) {
-            for (i in fromPosition until toPosition) {
+            for (i in fromPosition until toPosition)
                 Collections.swap(pedidosList, i, i + 1)
-            }
         } else {
-            for (i in fromPosition downTo toPosition + 1) {
+            for (i in fromPosition downTo toPosition + 1)
                 Collections.swap(pedidosList, i, i - 1)
-            }
         }
         notifyItemMoved(fromPosition, toPosition)
     }
@@ -93,56 +116,60 @@ class PedidoAdapter(
     fun enableNumericEditMode() {
         isNumericEditMode = true
         orderNumbers.clear()
+        cacheCurrentPedidos()
         notifyDataSetChanged()
     }
 
     fun disableNumericEditMode() {
         isNumericEditMode = false
         orderNumbers.clear()
-        notifyDataSetChanged()
+        cachedPedidosSnapshot = emptyList()
+        // Restaurar lista original
+        super.submitList(pedidosList.toList())
     }
 
-    fun getUpdatedListFromNumbers(): List<PedidoListaReponse> {
-        val numberToPedido = mutableMapOf<Int, PedidoListaReponse>()
-        val pedidosWithoutNumber = mutableListOf<PedidoListaReponse>()
+    fun getUpdatedList(): List<PedidoListaReponse> {
+        val allPedidos = cachedPedidosSnapshot.ifEmpty { pedidosList.toList() }
+        val totalPedidos = allPedidos.size
+        if (totalPedidos == 0) return emptyList()
 
-        for (pedido in pedidosList) {
-            val numero = pedido.id?.let { orderNumbers[it] }
-            if (numero != null && numero > 0) {
-                numberToPedido[numero] = pedido
-            } else {
-                pedidosWithoutNumber.add(pedido)
+        val idsConNumero = mutableSetOf<Long>()
+        val asignados = mutableMapOf<Int, PedidoListaReponse>()
+
+        val asignacionesOrdenadas = orderNumbers.entries
+            .filter { it.value > 0 }
+            .sortedBy { it.value }
+
+        for ((pedidoId, numero) in asignacionesOrdenadas) {
+            val pedido = allPedidos.firstOrNull { it.id == pedidoId } ?: continue
+            var idx = (numero - 1).coerceIn(0, totalPedidos - 1)
+            while (idx < totalPedidos && asignados.containsKey(idx)) idx++
+            if (idx < totalPedidos) {
+                asignados[idx] = pedido
+                pedido.id?.let { idsConNumero.add(it) }
             }
         }
 
-        val sortedList = mutableListOf<PedidoListaReponse>()
-        val maxNumber = numberToPedido.keys.maxOrNull() ?: 0
+        val sinNumero = allPedidos.filter { it.id !in idsConNumero }.toMutableList()
+        val resultado = arrayOfNulls<PedidoListaReponse>(totalPedidos)
 
-        for (i in 1..maxNumber) {
-            numberToPedido[i]?.let { sortedList.add(it) }
+        for ((idx, pedido) in asignados) resultado[idx] = pedido
+
+        val iter = sinNumero.iterator()
+        for (i in resultado.indices) {
+            if (resultado[i] == null && iter.hasNext()) resultado[i] = iter.next()
         }
 
-        sortedList.addAll(pedidosWithoutNumber)
-
-        return sortedList.mapIndexed { index, pedido ->
+        return resultado.filterNotNull().mapIndexed { index, pedido ->
             pedido.copy(orden = index)
         }
     }
 
-    fun getUpdatedList(): List<PedidoListaReponse> {
-        return if (isNumericEditMode && orderNumbers.isNotEmpty()) {
-            getUpdatedListFromNumbers()
-        } else {
-            pedidosList.mapIndexed { index, pedido ->
-                pedido.copy(orden = index)
-            }
-        }
-    }
-
-    fun hasPendingChanges(): Boolean = hayChangesPendientes
+    fun hasPendingChanges() = hayChangesPendientes
 
     fun resetPendingChanges() {
         hayChangesPendientes = false
         orderNumbers.clear()
+        cachedPedidosSnapshot = emptyList()
     }
 }

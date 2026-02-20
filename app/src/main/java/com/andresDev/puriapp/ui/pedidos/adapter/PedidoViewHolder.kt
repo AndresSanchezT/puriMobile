@@ -21,39 +21,59 @@ class PedidoViewHolder(
 
     private var currentPedido: PedidoListaReponse? = null
     private var textWatcher: TextWatcher? = null
-    private var isSettingText = false  // ✅ Flag para evitar loops
+    private var isSettingText = false
 
     fun bind(
         pedidoListaReponse: PedidoListaReponse,
         orderNumber: Int,
         isNumericEditMode: Boolean,
-        currentNumber: Int? = null  // ✅ NUEVO: Número actual si existe
+        currentNumber: Int? = null
     ) {
         currentPedido = pedidoListaReponse
 
         binding.apply {
             badgePosicion.visibility = View.GONE
 
-            // ✅ MEJORADO: Solo configurar si el modo cambió
             if (isNumericEditMode) {
-                if (cardNumeroOrden.visibility != View.VISIBLE) {
-                    cardNumeroOrden.visibility = View.VISIBLE
-                    setupOrderNumberInput(pedidoListaReponse)
-                }
+                cardNumeroOrden.visibility = View.VISIBLE
 
-                // ✅ Restaurar número sin perder foco
-                currentNumber?.let { numero ->
-                    if (numero > 0 && etNumeroOrden.text.toString() != numero.toString()) {
-                        setOrderNumberSilently(numero)
-                    }
-                }
-            } else {
-                if (cardNumeroOrden.visibility == View.VISIBLE) {
-                    cardNumeroOrden.visibility = View.GONE
-                    textWatcher?.let { etNumeroOrden.removeTextChangedListener(it) }
-                    textWatcher = null
+                // ✅ SIEMPRE remover el watcher anterior y crear uno nuevo para el pedido actual
+                textWatcher?.let { etNumeroOrden.removeTextChangedListener(it) }
+                textWatcher = null
+
+                // ✅ Primero setear el texto ANTES de agregar el watcher
+                isSettingText = true
+                if (currentNumber != null && currentNumber > 0) {
+                    etNumeroOrden.setText(currentNumber.toString())
+                    etNumeroOrden.setSelection(etNumeroOrden.text?.length ?: 0)
+                } else {
                     etNumeroOrden.text?.clear()
                 }
+                isSettingText = false
+
+                // ✅ Crear watcher atado al pedido actual DESPUÉS de setear el texto
+                val watcher = object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        if (isSettingText) return
+                        val numero = s?.toString()?.toIntOrNull() ?: 0
+                        pedidoListaReponse.id?.let { id ->
+                            onOrderNumberChanged(id, numero)
+                        }
+                    }
+                }
+                textWatcher = watcher
+                etNumeroOrden.addTextChangedListener(watcher)
+
+            } else {
+                // Salir del modo edición: limpiar todo
+                textWatcher?.let { etNumeroOrden.removeTextChangedListener(it) }
+                textWatcher = null
+                isSettingText = true
+                etNumeroOrden.text?.clear()
+                isSettingText = false
+                cardNumeroOrden.visibility = View.GONE
             }
 
             tvNombreCliente.text = "#$orderNumber - ${pedidoListaReponse.nombreCliente}"
@@ -97,69 +117,26 @@ class PedidoViewHolder(
         }
     }
 
-    private fun setupOrderNumberInput(pedido: PedidoListaReponse) {
-        // Solo configurar si no existe el listener
-        if (textWatcher != null) return
-
-        textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (isSettingText) return  // ✅ Evitar recursión
-
-                val numero = s?.toString()?.toIntOrNull() ?: 0
-                pedido.id?.let { id ->
-                    onOrderNumberChanged(id, numero)
-                }
-            }
-        }
-
-        binding.etNumeroOrden.addTextChangedListener(textWatcher)
-    }
-
-    // ✅ NUEVO: Setear texto sin disparar el TextWatcher
-    private fun setOrderNumberSilently(numero: Int) {
-        isSettingText = true
-        binding.etNumeroOrden.setText(numero.toString())
-        // Mantener cursor al final
-        binding.etNumeroOrden.setSelection(binding.etNumeroOrden.text?.length ?: 0)
-        isSettingText = false
-    }
-
-    fun setOrderNumber(numero: Int) {
-        if (numero > 0) {
-            setOrderNumberSilently(numero)
-        }
-    }
-
     fun showPositionBadge(position: Int) {
         binding.badgePosicion.visibility = View.VISIBLE
         binding.tvPosicionBadge.text = "Pos. ${position + 1}"
-
         binding.badgePosicion.apply {
             scaleX = 0.8f
             scaleY = 0.8f
             animate()
-                .scaleX(1.1f)
-                .scaleY(1.1f)
-                .setDuration(100)
+                .scaleX(1.1f).scaleY(1.1f).setDuration(100)
                 .withEndAction {
                     animate().scaleX(1f).scaleY(1f).setDuration(100).start()
-                }
-                .start()
+                }.start()
         }
     }
 
     fun hidePositionBadge() {
         binding.badgePosicion.animate()
-            .alpha(0f)
-            .scaleX(0.8f)
-            .scaleY(0.8f)
-            .setDuration(150)
+            .alpha(0f).scaleX(0.8f).scaleY(0.8f).setDuration(150)
             .withEndAction {
                 binding.badgePosicion.visibility = View.GONE
                 binding.badgePosicion.alpha = 1f
-            }
-            .start()
+            }.start()
     }
 }

@@ -47,6 +47,11 @@
         tools:layout="@layout/fragment_admin_data" />
 
     <fragment
+        android:id="@+id/reporteProductosFragment"
+        android:name="com.andresDev.puriapp.ui.reportes.ReporteProductosFragment"
+        android:label="ReporteProductosFragment" />
+
+    <fragment
         android:id="@+id/clienteAddFragment"
         android:name="com.andresDev.puriapp.ui.clientes.ClienteAddFragment"
         android:label="fragment_cliente_add"
@@ -67,4 +72,5 @@
             app:argType="long" />
 
     </fragment>
+
 </navigation>

@@ -105,7 +105,7 @@ class PedidoFragment : Fragment() {
 
     private fun activarEdicionNumerica() {
         isEditingWithNumbers = true
-        pedidoAdapter.enableNumericEditMode()
+        pedidoAdapter.enableNumericEditMode()   // cachea internamente los pedidos
 
         // Deshabilitar drag & drop
         itemTouchHelper.attachToRecyclerView(null)
@@ -113,15 +113,15 @@ class PedidoFragment : Fragment() {
         // Cambiar texto del botón
         binding.btnEditarOrden.apply {
             text = "❌ Cancelar"
-            setBackgroundColor(
-                ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
-            )
+            backgroundTintList = ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark)
         }
 
-        // Mostrar instrucciones
+        // Limpiar búsqueda para mostrar todos los pedidos cacheados
+        binding.etBuscarPedido.setText("")
+
         Toast.makeText(
             requireContext(),
-            "Asigna números a los pedidos para reordenar\nEjemplo: #1, #2, #3...",
+            "Busca un pedido y asígnale un número de posición.\nEjemplo: Busca 'Juan' → ponle #1",
             Toast.LENGTH_LONG
         ).show()
     }
@@ -131,18 +131,19 @@ class PedidoFragment : Fragment() {
         pedidoAdapter.disableNumericEditMode()
         pedidoAdapter.resetPendingChanges()
 
+        // Limpiar búsqueda y restaurar lista completa
+        binding.etBuscarPedido.setText("")
+        pedidoViewModel.filtrarPedidos("")
+
         // Re-habilitar drag & drop
         itemTouchHelper.attachToRecyclerView(binding.rvPedidos)
 
         // Restaurar botón
         binding.btnEditarOrden.apply {
             text = "✏️ Editar Orden"
-            setBackgroundColor(
-                ContextCompat.getColor(requireContext(), R.color.primaryDark)
-            )
+            backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.primaryDark)
         }
 
-        // Ocultar botón guardar
         ocultarBotonGuardarOrden()
     }
 
@@ -517,7 +518,13 @@ class PedidoFragment : Fragment() {
 
     private fun initSearch() {
         textWatcher = binding.etBuscarPedido.addTextChangedListener { text ->
-            pedidoViewModel.filtrarPedidos(text.toString())
+            if (isEditingWithNumbers) {
+                // ✅ En modo edición: filtrar sobre el snapshot cacheado del adaptador
+                pedidoAdapter.filterByName(text.toString())
+            } else {
+                // Modo normal: filtrar en ViewModel
+                pedidoViewModel.filtrarPedidos(text.toString())
+            }
         }
     }
 

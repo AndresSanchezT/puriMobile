@@ -75,6 +75,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideReportesApi(retrofit: Retrofit): ReportesApi =
+        retrofit.create(ReportesApi::class.java)
+
+    @Provides
+    @Singleton
     fun provideProductoApi(retrofit: Retrofit): ProductoApi =
         retrofit.create(ProductoApi::class.java)
 }

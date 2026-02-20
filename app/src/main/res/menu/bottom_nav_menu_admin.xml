@@ -17,7 +17,7 @@
         android:icon="@drawable/pedido"
         />
     <item
-        android:id="@+id/datosPedidosFragment"
+        android:id="@+id/reporteProductosFragment"
         android:title="@string/info"
         android:icon="@drawable/mercado"
         />
